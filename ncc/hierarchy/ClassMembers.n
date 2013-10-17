@@ -114,7 +114,7 @@ public abstract class MemberBuilder : MemberInfo, IMember, System.IEquatable[IMe
         | NemerleModifiers.Internal  => Accessibility.Internal
         | _                           =>
           if (attributes %&& (NemerleModifiers.Protected %| NemerleModifiers.Internal))
-            Accessibility.ProtectedOrInternal
+            Accessibility.ProtectedAndInternal
           else
             Accessibility.Public
       }
