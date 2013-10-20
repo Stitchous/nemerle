@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2003-2008 The University of Wroclaw.
  * All rights reserved.
  *
@@ -523,6 +523,8 @@ namespace Nemerle.Compiler
             | SR.TypeAttributes.Public
             | SR.TypeAttributes.NestedPublic      => Accessibility.Public
             | SR.TypeAttributes.NestedPrivate
+            | SR.TypeAttributes.NotPublic when attributes %&& NemerleModifiers.Internal 
+                                                  => Accessibility.Internal
             | SR.TypeAttributes.NotPublic         => Accessibility.Private
             | _ => Util.ice ("system type returned invalid attributes")
           }
