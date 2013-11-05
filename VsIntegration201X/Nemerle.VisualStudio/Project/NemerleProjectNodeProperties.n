@@ -1,0 +1,324 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+using System.Linq;
+
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudioTools.Project;
+using Microsoft.VisualStudioTools.Project.Automation;
+
+namespace Nemerle.VisualStudio.Project
+{
+  [ComVisible(true)]
+  [ClassInterface(ClassInterfaceType.AutoDual)]
+  public class NemerleProjectNodeProperties : ProjectNodeProperties, VSLangProj.ProjectProperties, IVsCfgBrowseObject
+  {
+        internal this(node : ProjectNode)
+        {
+            base(node);
+            
+            _activeCfgSettings = Lazy(() => OAProjectConfigurationProperties(NemerleProjectNode));
+        }
+        
+        [Browsable(false)]
+		public OutputPath : string
+		{
+			get { GetBuildPropertyValue(OutputPathPropertyName); }
+			set { NemerleProjectNode.SetProjectProperty(OutputPathPropertyName, value); }
+		}
+        
+        #region ProjectProperties Members
+
+        [Browsable(false)]
+		public ActiveConfigurationSettings : VSLangProj.ProjectConfigurationProperties
+		{
+			get { _activeCfgSettings.Value; }
+		}
+
+		[Browsable(false)]
+		public AbsoluteProjectDirectory : string
+		{
+			get { NemerleProjectNode.ProjectFolder }
+		}
+
+		ActiveFileSharePath : string
+		    implements VSLangProj.ProjectProperties.ActiveFileSharePath
+		{
+			get { throw NotImplementedException() }
+		}
+
+		ActiveWebAccessMethod : VSLangProj.prjWebAccessMethod
+		    implements VSLangProj.ProjectProperties.ActiveWebAccessMethod
+		{
+			get { throw NotImplementedException() }
+		}
+
+		ApplicationIcon : string
+		    implements VSLangProj.ProjectProperties.ApplicationIcon
+		{
+			get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		AssemblyKeyContainerName : string 
+		    implements VSLangProj.ProjectProperties.AssemblyKeyContainerName
+		{
+			get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		AssemblyName : string
+		    implements VSLangProj.ProjectProperties.AssemblyName
+		{
+            get { GetBuildPropertyValue(ProjectFileConstants.AssemblyName); }
+			set { NemerleProjectNode.SetProjectProperty(ProjectFileConstants.AssemblyName, value); }		
+		}
+
+		AssemblyOriginatorKeyFile : string
+		    implements VSLangProj.ProjectProperties.AssemblyOriginatorKeyFile
+		{
+		    get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		AssemblyOriginatorKeyMode : VSLangProj.prjOriginatorKeyMode
+		    implements VSLangProj.ProjectProperties.AssemblyOriginatorKeyMode
+		{
+			get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		DefaultClientScript : VSLangProj.prjScriptLanguage
+		    implements VSLangProj.ProjectProperties.DefaultClientScript
+		{
+			get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		DefaultHTMLPageLayout : VSLangProj.prjHTMLPageLayout
+		    implements VSLangProj.ProjectProperties.DefaultHTMLPageLayout
+		{
+			get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		DefaultNamespace : string
+		    implements VSLangProj.ProjectProperties.DefaultNamespace
+		{
+			get { NemerleProjectNode.GetProjectProperty(ProjectFileConstants.RootNamespace); }
+			set { NemerleProjectNode.SetProjectProperty(ProjectFileConstants.RootNamespace, value); }
+		}
+
+		DefaultTargetSchema : VSLangProj.prjTargetSchema
+		    implements VSLangProj.ProjectProperties.DefaultTargetSchema
+		{
+			get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		DelaySign : bool
+		    implements VSLangProj.ProjectProperties.DelaySign
+		{
+			get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		ExtenderCATIDVSLangProj : string
+		    implements VSLangProj.ProjectProperties.ExtenderCATID
+		{
+			get { throw NotImplementedException() }
+		}
+
+		ExtenderNamesVSLangProj : object
+		    implements VSLangProj.ProjectProperties.ExtenderNames
+		{
+			get { throw NotImplementedException() }
+		}
+
+		FileNameVSLangProj : string
+		    implements VSLangProj.ProjectProperties.FileName
+		{
+			get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		FileSharePath : string
+		    implements VSLangProj.ProjectProperties.FileSharePath
+		{
+			get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		FullPathVSLangProj : string
+		    implements VSLangProj.ProjectProperties.FullPath
+		{
+			get { throw NotImplementedException() }
+		}
+
+		LinkRepair : bool
+		    implements VSLangProj.ProjectProperties.LinkRepair
+		{
+			get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		LocalPath : string
+		    implements VSLangProj.ProjectProperties.LocalPath
+		{
+			get { throw NotImplementedException() }
+		}
+
+		OfflineURL : string
+		    implements VSLangProj.ProjectProperties.OfflineURL
+		{
+			get { throw NotImplementedException() }
+		}
+
+		OptionCompare : VSLangProj.prjCompare
+		    implements VSLangProj.ProjectProperties.OptionCompare
+		{
+			get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		OptionExplicit : VSLangProj.prjOptionExplicit
+		    implements VSLangProj.ProjectProperties.OptionExplicit
+		{
+			get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		OptionStrict : VSLangProj.prjOptionStrict
+		    implements VSLangProj.ProjectProperties.OptionStrict
+		{
+			get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		OutputFileName : string
+		    implements VSLangProj.ProjectProperties.OutputFileName
+		{
+			get { throw NotImplementedException() }
+		}
+
+		OutputType : VSLangProj.prjOutputType
+		    implements VSLangProj.ProjectProperties.OutputType
+		{
+			get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		ProjectType : VSLangProj.prjProjectType
+		    implements  VSLangProj.ProjectProperties.ProjectType
+		{
+			get { throw NotImplementedException() }
+		}
+
+		ReferencePath : string
+		    implements VSLangProj.ProjectProperties.ReferencePath
+		{
+			get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		[Browsable(false)]
+		RootNamespace : string
+		    implements VSLangProj.ProjectProperties.RootNamespace
+		{
+			get { GetBuildPropertyValue(ProjectFileConstants.RootNamespace); }
+			set { NemerleProjectNode.SetProjectProperty(ProjectFileConstants.RootNamespace, value); }
+		}
+
+		ServerExtensionsVersion : string
+		    implements VSLangProj.ProjectProperties.ServerExtensionsVersion
+		{
+			get { throw NotImplementedException(); }
+		}
+
+		StartupObject : string
+		    implements VSLangProj.ProjectProperties.StartupObject
+		{
+			get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		URL : string
+		    implements VSLangProj.ProjectProperties.URL
+		{
+			get { throw NotImplementedException(); }
+		}
+
+		WebAccessMethod : VSLangProj.prjWebAccessMethod
+		    implements VSLangProj.ProjectProperties.WebAccessMethod
+		{
+			get { throw NotImplementedException() }
+			set { throw NotImplementedException() }
+		}
+
+		WebServer : string
+		    implements VSLangProj.ProjectProperties.WebServer
+		{
+			get { throw NotImplementedException() }
+		}
+
+		WebServerVersion : string
+		    implements VSLangProj.ProjectProperties.WebServerVersion
+		{
+			get { throw NotImplementedException() }
+		}
+
+		__id : string 
+		    implements VSLangProj.ProjectProperties.__id
+		{
+			get { throw NotImplementedException() }
+		}
+
+		__project : object
+		    implements VSLangProj.ProjectProperties.__project
+		{
+			get { throw NotImplementedException() }
+		}
+
+		get_Extender(_ExtenderName : string) : object
+		    implements VSLangProj.ProjectProperties.get_Extender
+		{
+			throw NotImplementedException()
+		}
+
+		#endregion
+		
+		#region IVsCfgBrowseObject
+		
+		public GetCfg(ppCfg : out Microsoft.VisualStudio.Shell.Interop.IVsCfg) : int
+        {
+            _ = ppCfg;
+            throw System.NotImplementedException()
+        }
+        
+        public override GetProjectItem(pHier : out IVsHierarchy, pItemid : out uint) : int
+        {
+            base.GetProjectItem(out pHier, out pItemid)
+        }
+        
+        #endregion
+		
+		private NemerleProjectNode : NemerleProjectNode
+        {
+            get { Node.ProjectMgr :> NemerleProjectNode } 
+        }
+        
+        private GetBuildPropertyValue(propertyName : string) : string
+		{
+			NemerleProjectNode.BuildProject.GetPropertyValue(propertyName) ?? string.Empty
+		}
+        
+        OutputPathPropertyName = "OutputPath";
+        _activeCfgSettings : Lazy[OAProjectConfigurationProperties];
+    }
+}

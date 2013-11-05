@@ -1,0 +1,51 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+
+using Microsoft.VisualStudioTools.Project;
+using Microsoft.VisualStudioTools;
+using Microsoft.VisualStudioTools.Navigation;
+
+using Nemerle.VisualStudio.Navigation;
+
+namespace Nemerle.VisualStudio
+{
+  [PackageRegistration(UseManagedResourcesOnly = true)]
+  [ProvideAutoLoad(UIContextGuids.SolutionExists)]
+  public class NemerleToolsPackage : CommonPackage, IVsComponentSelectorProvider
+  {
+    public this()
+    {
+    }
+    
+    internal override CreateLibraryManager(package : CommonPackage) : LibraryManager
+    {
+        NemerleLibraryManager(package :> NemerleToolsPackage);
+    }
+    
+    public override GetLibraryManagerType() : Type
+    { 
+        typeof(INemerleLibraryManager) 
+    }
+    
+    public override IsRecognizedFile(filename : string) : bool
+    {
+        _ = filename;
+        true
+    }
+    
+    public GetComponentSelectorPage(rguidPage : ref System.Guid, ppage : array[VSPROPSHEETPAGE]) : int
+    {
+        _ = rguidPage; _ = ppage;
+        throw NotImplementedException()
+    }   
+  }
+}

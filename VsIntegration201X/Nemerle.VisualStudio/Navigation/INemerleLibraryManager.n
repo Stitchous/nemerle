@@ -1,0 +1,12 @@
+﻿using Microsoft.VisualStudioTools.Navigation;
+
+namespace Nemerle.VisualStudio.Navigation
+{
+    /// <summary>
+    /// This interface defines the service that finds Nemerle files inside a hierarchy
+    /// and builds the informations to expose to the class view or object browser.
+    /// </summary>
+    internal interface INemerleLibraryManager : ILibraryManager 
+    {
+    }
+}

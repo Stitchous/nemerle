@@ -1,0 +1,31 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using System.Linq;
+
+using Microsoft.VisualStudioTools.Project;
+
+namespace Nemerle.VisualStudio.Project.PropertyPages
+{
+  class NemerleGeneralPropertyPage : CommonPropertyPage
+  {
+    public override Apply() : void{ throw NotImplementedException() }
+    
+    public override Control : Control
+    {
+        get{ throw System.NotImplementedException() }
+    }
+    
+    public override LoadSettings() : void{ throw NotImplementedException() }
+    
+    public override Name : string
+    {
+        get { "General" }
+    }
+  }
+}

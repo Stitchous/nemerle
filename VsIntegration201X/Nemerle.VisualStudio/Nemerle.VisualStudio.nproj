@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\Common.props" />
+  <PropertyGroup>
+    <VSToolsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>67cdb852-248a-46df-8020-9573d93d4741</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Nemerle.VisualStudio</RootNamespace>
+    <AssemblyName>Nemerle.VisualStudio</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <NoStdLib>true</NoStdLib>
+    <NemerleVersion>Net-4.0</NemerleVersion>
+    <NemerleBinPathRoot Condition=" '$(NemerleBinPathRoot)' == '' ">$(ProgramFiles)\Nemerle</NemerleBinPathRoot>
+    <Nemerle Condition=" '$(Nemerle)' == '' ">$(NemerleBinPathRoot)\$(NemerleVersion)</Nemerle>
+    <Name>Nemerle.VisualStudio</Name>
+    <DocumentationFile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <StartProgram>C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\devenv.exe</StartProgram>
+    <WorkingDirectory />
+    <CmdArgs>/rootsuffix Exp</CmdArgs>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <StartProgram>C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe</StartProgram>
+    <WorkingDirectory />
+    <CmdArgs>/rootsuffix Exp</CmdArgs>
+    <PlatformTarget>x86</PlatformTarget>
+    <Platform>x86</Platform>
+    <RunDebugger>false</RunDebugger>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
+    <PlatformTarget>x86</PlatformTarget>
+    <Platform>x86</Platform>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.Shell.$(VSTarget), Version=$(VSTarget).0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.TextManager.Interop" />
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Nemerle">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(Nemerle)\Nemerle.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <MacroReference Include="Nemerle.Linq">
+      <HintPath>$(Nemerle)\Nemerle.Linq.dll</HintPath>
+    </MacroReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="LanguageService\NemerleLanguageService.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Navigation\INemerleLibraryManager.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Navigation\NemerleLibraryManager.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Navigation\NemerleLibraryNode.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NemerleConstants.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NemerleProjectPackage.n" />
+    <Compile Include="NemerleToolsPackage.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Project\NemerleEditorFactory.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Project\NemerleProjectFactory.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Project\NemerleProjectNode.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Project\NemerleProjectNodeProperties.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Project\PropertyPages\GeneralPropertyPageTag.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Project\PropertyPages\NemerleGeneralPropertyPage.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.n" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="LanguageService" />
+    <Folder Include="Navigation" />
+    <Folder Include="Project\PropertyPages" />
+    <Folder Include="Resources" />
+    <Folder Include="Templates" />
+    <Folder Include="Templates\Projects" />
+    <Folder Include="Templates\Projects\ConsoleApplication\" />
+    <Folder Include="VsixManifest11OrLater" />
+    <Folder Include="VsixManifest10" />
+    <Folder Include="Project" />
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.VisualStudioTools.Project\Microsoft.VisualStudioTools.Project.csproj">
+      <Name>Microsoft.VisualStudioTools.Project</Name>
+      <Project>{542ff483-10bc-492b-a38d-94377ca69c49}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- VSIX -->
+    <None Include="Templates\Projects\ConsoleApplication\Console.ico" />
+    <None Include="Templates\Projects\ConsoleApplication\AssemblyInfo.n" />
+    <None Include="Templates\Projects\ConsoleApplication\Main.n" />
+    <None Include="Templates\Projects\ConsoleApplication\ConsoleApplication.nproj" />
+    <None Include="VsixManifest10\source.extension.vsixmanifest" Condition="'$(VSTarget)' == '10.0'">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="VsixManifest11OrLater\source.extension.vsixmanifest" Condition="'$(VSTarget)' != '10.0'">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <VSCTCompile Include="Nemerle.VisualStudio.vsct">
+      <ResourceName>1000</ResourceName>
+      <SubType>Designer</SubType>
+    </VSCTCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources.resx">
+      <MergeWithCTO>true</MergeWithCTO>
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\NemerleImageList.bmp">
+      <SubType>Content</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\NemerleProjectIconsImageList.bmp">
+      <SubType>Content</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <PropertyGroup>
+    <!--
+    To specify a different registry root to register your package, uncomment the TargetRegistryRoot
+    tag and specify a registry root in it.
+    <TargetRegistryRoot></TargetRegistryRoot>
+    -->
+    <RegisterOutputPackage>true</RegisterOutputPackage>
+    <RegisterWithCodebase>true</RegisterWithCodebase>
+  </PropertyGroup>
+  <Import Project="$(Nemerle)\Nemerle.MSBuild.targets" />
+  <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" />
+  <PropertyGroup>
+    <CopyPkgDefDependsOn>$(CopyPkgDefDependsOn);FixPkgdefTarget</CopyPkgDefDependsOn>
+  </PropertyGroup>
+  <Target Name="FixPkgdefTarget">
+    <FixPkgdef PkgdefPath="$(MSBuildProjectDirectory)\$(IntermediateOutputPath)$(TargetName).pkgdef" />
+  </Target>
+  <UsingTask TaskName="FixPkgdef" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <PkgdefPath ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+            // Replace all "$PackageFolder$" with the actual path in the pkgdef
+            String content = File.ReadAllText(PkgdefPath);
+            String dllPath = Path.GetDirectoryName(PkgdefPath);
+            content = content.Replace("$PackageFolder$", dllPath);
+            File.WriteAllText(PkgdefPath, content);
+         ]]></Code>
+    </Task>
+  </UsingTask>
+  <!--
+		To modify your build process, add your task inside one of the targets below and uncomment it. 
+		Other similar extension points exist, see Microsoft.Common.targets.
+
+	<Target Name="BeforeBuild">
+	</Target>
+	<Target Name="AfterBuild">
+	</Target>
+	-->
+</Project>

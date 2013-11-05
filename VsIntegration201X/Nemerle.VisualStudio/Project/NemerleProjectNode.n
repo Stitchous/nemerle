@@ -1,0 +1,58 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.IO;
+
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudioTools.Project;
+
+using Nemerle.VisualStudio.Navigation;
+using Nemerle.VisualStudio.Project.PropertyPages;
+
+namespace Nemerle.VisualStudio.Project
+{
+    internal class NemerleProjectNode : CommonProjectNode
+    {
+        internal this(package : CommonProjectPackage)
+        {
+            base(package, 
+                 Utilities.GetImageList(typeof(NemerleProjectNode).Assembly.GetManifestResourceStream(NemerleConstants.ProjectImageList)))
+        }
+        
+        protected override ProjectIconsImageStripStream : Stream 
+        {
+            get 
+            {
+                typeof(NemerleProjectNode).Assembly.GetManifestResourceStream(NemerleConstants.ProjectIconsImageList);
+            }
+        }
+
+        public override GetEditorFactoryType() : Type { throw NotImplementedException() }
+
+        public override GetFormatList() : string { throw NotImplementedException() }
+
+        public override GetGeneralPropertyPageType() : Type { typeof(NemerleGeneralPropertyPage) }
+
+        public override GetLauncher() : IProjectLauncher { throw NotImplementedException() }
+
+        public override GetLibraryManagerType() : Type { typeof(INemerleLibraryManager) }
+
+        public override GetProjectFactoryType() : Type { typeof(NemerleProjectFactory) }
+
+        public override GetProjectName() : string { throw NotImplementedException() }
+        
+        protected override CreatePropertiesObject() : NodeProperties 
+        {
+            NemerleProjectNodeProperties(this)
+        }
+        
+        internal override BuildAsync(vsopts : uint, config : string, output : IVsOutputWindowPane, target : string, uiThreadCallback : Action[MSBuildResult, string]) : void
+        {
+            def buildResult = base.Build(vsopts, config, output, target);
+            uiThreadCallback(buildResult, target)
+        }
+    }
+}

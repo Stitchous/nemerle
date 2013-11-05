@@ -1,0 +1,21 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Microsoft.VisualStudioTools.Project;
+
+namespace Nemerle.VisualStudio.Project
+{
+  public class NemerleEditorFactory : CommonEditorFactory
+  {
+      internal this(package : CommonProjectPackage)
+      {
+          base(package)
+      }
+  }
+}

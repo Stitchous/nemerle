@@ -1,0 +1,109 @@
+﻿using System;
+using System.ComponentModel.Design;
+using System.Runtime.InteropServices;
+
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudioTools;
+using Microsoft.VisualStudioTools.Navigation;
+using Microsoft.VisualStudioTools.Project;
+using Microsoft.VisualStudio.TextManager.Interop;
+using Microsoft.VisualStudio.OLE.Interop;
+
+using Nemerle.VisualStudio.LanguageService;
+using Nemerle.VisualStudio.Project;
+using Nemerle.VisualStudio.Project.PropertyPages;
+using Nemerle.VisualStudio.Navigation;
+using Nemerle.VisualStudio.NemerleConstants;
+
+namespace Nemerle.VisualStudio
+{
+    [Guid(NemerleConstants.PackageGuidString)]
+    [PackageRegistration(UseManagedResourcesOnly = true)]
+    [ProvideProjectFactory(typeof(NemerleProjectFactory), 
+                           LanguageName, 
+                           LanguageName + " Project Files (*." + ProjectExtension + ");*." + ProjectExtension, 
+                           ProjectExtension,
+	                       ProjectExtension, 
+                           @"..\..\..\Templates\Projects\ConsoleApplication",
+                           LanguageVsTemplate = LanguageName)]
+    [ProvideEditorExtension(typeof(NemerleEditorFactory), FileExtension, 50, ProjectGuid = VSConstants.CLSID.MiscellaneousFilesProject_string)]
+    [ProvideObject(typeof(NemerleGeneralPropertyPage))]
+    public class NemerleProjectPackage : CommonProjectPackage 
+    {   
+		public override CreateEditorFactory() : CommonEditorFactory
+        { 
+            NemerleEditorFactory(this)
+        }
+        
+        public override CreateProjectFactory() : ProjectFactory 
+        { 
+            NemerleProjectFactory(this) 
+        }
+         
+        public override GetIconIdForAboutBox() : uint
+        { 
+            throw NotImplementedException() 
+        }
+        
+        public override GetIconIdForSplashScreen() : uint 
+        { 
+            throw NotImplementedException() 
+        }
+        
+        public override GetProductDescription() : string 
+        { 
+            throw NotImplementedException() 
+        }
+        
+        public override GetProductName() : string 
+        { 
+            throw NotImplementedException() 
+        }
+        
+        public override GetProductVersion() : string
+        { 
+            GetType().Assembly.GetName().Version.ToString() 
+        }
+        
+        #region GetService()
+
+		internal GetService[T](throwIfFail : bool) : T
+			where T : class
+		{
+			GetService.[T, T](throwIfFail)
+		}
+
+		internal GetService[T]() : T
+			where T : class
+		{
+			GetService.[T, T](false)
+		}
+
+		internal GetService[TItf, TSrv]() : TItf
+			where TItf : class
+		{
+			GetService.[TItf, TSrv](false)
+		}
+
+		internal GetService[TItf, TSrv](throwIfFail : bool) : TItf
+			where TItf : class
+		{
+			match(GetService(typeof(TSrv))) 
+			{
+			    | service is TItf => service
+			    | _ when throwIfFail => throw ArgumentException("GetService() failed for query " + typeof(TSrv).Name)
+			    | _ => null
+			}
+		}
+
+		GetIOleComponentManager() : IOleComponentManager
+		{
+			GetService.[IOleComponentManager, SOleComponentManager](true);
+		}
+
+		#endregion
+		
+		_libraryManager : NemerleLibraryManager;
+    }
+}

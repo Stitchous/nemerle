@@ -1,0 +1,27 @@
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="60FDCA56-3414-461F-9D77-8F8CCA1B11D4" Version="1.1.9999.0" Language="en-US" Publisher="Nemerle Team" />
+    <DisplayName>Nemerle_TESTPKG</DisplayName>
+    <Description xml:space="preserve">Visual Studio integration extension for Nemerle - high-level statically-typed programming language for the .NET platform. It offers functional, object-oriented and imperative features, has a simple C#-like syntax and a powerful meta-programming system.</Description>
+    <MoreInfo>http://www.nemerle.org</MoreInfo>
+    <GettingStartedGuide>http://www.nemerle.org</GettingStartedGuide>
+    <Icon>PythonProject.ico</Icon>
+    <PreviewImage>PythonProjectBig.ico</PreviewImage>
+  </Metadata>
+  <!-- Version="11.0" specifies the minimum (not the maximum) version, and the
+       Id specifications are minimums; any SKU equal or 'higher' will accept
+       them. -->
+  <Installation InstalledByMsi="false">
+    <InstallationTarget Id="Microsoft.VisualStudio.Ultimate" Version="11.0" />
+    <InstallationTarget Id="Microsoft.VisualStudio.Premium" Version="11.0" />
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="11.0" />
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" Version="4.5" />
+  </Dependencies>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.Package" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+    <Asset Type="Microsoft.VisualStudio.Assembly" Path="|%CurrentProject%|" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="|%CurrentProject%|" />
+  </Assets>
+</PackageManifest>

@@ -1,0 +1,21 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Nemerle.VisualStudio
+{
+  internal module NemerleConstants
+  {
+      internal FileExtension         = ".n";
+      internal LanguageName          = "Nemerle";
+      internal PackageGuidString     = "49DCD4BC-3D45-45EE-B406-A2FF127321DD";
+      internal ProjectExtension      = "nproj";
+      internal ProjectImageList      = "Nemerle.VisualStudio.Resources.NemerleImageList.bmp";
+      internal ProjectIconsImageList = "Nemerle.VisualStudio.Resources.NemerleProjectIconsImageList.bmp";
+  }
+}

@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Vsix xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2010">
+  <Identifier Id="60FDCA56-3414-461F-9D77-8F8CCA1B11D4">
+    <Name>Nemerle</Name>
+    <Author>Nemerle Team</Author>
+    <Version>1.1.9999.0</Version>
+    <Description xml:space="preserve">Visual Studio integration extension for Nemerle - high-level statically-typed programming language for the .NET platform. It offers functional, object-oriented and imperative features, has a simple C#-like syntax and a powerful meta-programming system.</Description>
+    <Locale>1033</Locale>
+    <MoreInfoUrl>http://www.nemerle.org</MoreInfoUrl>
+    <GettingStartedGuide>http://www.nemerle.org</GettingStartedGuide>
+    <InstalledByMsi>false</InstalledByMsi>
+    <Icon>PythonProject.ico</Icon>
+    <PreviewImage>PythonProjectBig.ico</PreviewImage>
+    <SupportedProducts>
+      <!-- The Edition specifications are minimums; any SKU equal or 'higher'
+           will accept them. -->
+      <VisualStudio Version="10.0">
+        <Edition>Ultimate</Edition>
+        <Edition>Premium</Edition>
+        <Edition>Pro</Edition>
+      </VisualStudio>
+    </SupportedProducts>
+    <SupportedFrameworkRuntimeEdition MinVersion="4.0" />
+  </Identifier>
+  <References>
+    <Reference Id="Microsoft.VisualStudio.MPF" MinVersion="11.0">
+      <Name>Visual Studio MPF</Name>
+    </Reference>
+  </References>
+  <Content>
+    <MefComponent>|%CurrentProject%|</MefComponent>
+    <VsPackage>|%CurrentProject%;PkgdefProjectOutputGroup|</VsPackage>
+    <ProjectTemplate>ProjectTemplates\Nemerle</ProjectTemplate>
+    <ItemTemplate>ItemTemplates\Nemerle</ItemTemplate>
+  </Content>
+</Vsix>
