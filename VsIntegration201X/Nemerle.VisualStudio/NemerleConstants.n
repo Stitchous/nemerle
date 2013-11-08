@@ -13,6 +13,7 @@ namespace Nemerle.VisualStudio
   {
       internal FileExtension         = ".n";
       internal LanguageName          = "Nemerle";
+      internal ProjectName           = "NemerleProject";
       internal PackageGuidString     = "49DCD4BC-3D45-45EE-B406-A2FF127321DD";
       internal ProjectExtension      = "nproj";
       internal ProjectImageList      = "Nemerle.VisualStudio.Resources.NemerleImageList.bmp";

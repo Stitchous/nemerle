@@ -114,6 +114,9 @@
     <Compile Include="Project\NemerleEditorFactory.n">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Project\NemerleProjectConfig.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Project\NemerleProjectFactory.n">
       <SubType>Code</SubType>
     </Compile>

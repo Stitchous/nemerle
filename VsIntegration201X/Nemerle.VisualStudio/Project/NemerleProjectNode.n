@@ -5,11 +5,14 @@ using Nemerle.Utility;
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudioTools.Project;
 
 using Nemerle.VisualStudio.Navigation;
+using Nemerle.VisualStudio.NemerleConstants;
 using Nemerle.VisualStudio.Project.PropertyPages;
 
 namespace Nemerle.VisualStudio.Project
@@ -22,6 +25,11 @@ namespace Nemerle.VisualStudio.Project
                  Utilities.GetImageList(typeof(NemerleProjectNode).Assembly.GetManifestResourceStream(NemerleConstants.ProjectImageList)))
         }
         
+        public override CodeFileExtensions : array[string]
+        {
+            get { array[NemerleConstants.FileExtension] }
+        }
+        
         protected override ProjectIconsImageStripStream : Stream 
         {
             get 
@@ -32,17 +40,40 @@ namespace Nemerle.VisualStudio.Project
 
         public override GetEditorFactoryType() : Type { throw NotImplementedException() }
 
-        public override GetFormatList() : string { throw NotImplementedException() }
+        public override GetFormatList() : string 
+        { 
+            $"$LanguageName Project Files (*.$ProjectExtension);*.$ProjectExtension"
+        }
 
-        public override GetGeneralPropertyPageType() : Type { typeof(NemerleGeneralPropertyPage) }
+        public override GetGeneralPropertyPageType() : Type 
+        { 
+            typeof(NemerleGeneralPropertyPage) 
+        }
 
-        public override GetLauncher() : IProjectLauncher { throw NotImplementedException() }
+        public override GetLauncher() : IProjectLauncher 
+        { 
+            throw NotSupportedException() 
+        }
 
-        public override GetLibraryManagerType() : Type { typeof(INemerleLibraryManager) }
+        public override GetLibraryManagerType() : Type 
+        { 
+            typeof(INemerleLibraryManager) 
+        }
 
-        public override GetProjectFactoryType() : Type { typeof(NemerleProjectFactory) }
+        public override GetProjectFactoryType() : Type 
+        { 
+            typeof(NemerleProjectFactory) 
+        }
 
-        public override GetProjectName() : string { throw NotImplementedException() }
+        public override GetProjectName() : string 
+        { 
+            NemerleConstants.ProjectName 
+        }
+        
+        public override IsCodeFile(strFileName : string) : bool 
+        {
+            IsNemerleFile(strFileName);
+        }
         
         protected override CreatePropertiesObject() : NodeProperties 
         {
@@ -53,6 +84,17 @@ namespace Nemerle.VisualStudio.Project
         {
             def buildResult = base.Build(vsopts, config, output, target);
             uiThreadCallback(buildResult, target)
+        }
+        
+        internal static IsNemerleFile(fileName : string) : bool 
+        {
+            def ext = Path.GetExtension(fileName);
+            String.Equals(ext, NemerleConstants.FileExtension, StringComparison.OrdinalIgnoreCase);
+        }
+        
+        public override MakeConfiguration(activeConfigName : string) : CommonProjectConfig
+        {
+            NemerleProjectConfig(this, activeConfigName);
         }
     }
 }

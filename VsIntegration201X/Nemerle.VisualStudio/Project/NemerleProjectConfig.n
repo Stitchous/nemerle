@@ -1,0 +1,100 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Extensions;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Linq;
+
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudioTools;
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudioTools.Project;
+
+namespace Nemerle.VisualStudio.Project
+{
+    class NemerleProjectConfig : CommonProjectConfig  
+    {
+        public this(project : CommonProjectNode, configuration : string)
+        {
+            base(project, configuration);
+        }
+
+        public override DebugLaunch(flags : uint) : int 
+        {
+            def GetDebugTargetInfo()
+            {
+                def debugTargetInfo = VsDebugTargetInfo() <-
+                {
+                                      fSendStdoutToOutputWindow = 0;
+                                      dlo = DEBUG_LAUNCH_OPERATION.DLO_CreateProcess;
+                                      grfLaunch = flags;
+                };
+                debugTargetInfo.cbSize = Marshal.SizeOf(debugTargetInfo) :> uint;
+
+                // On first call, reset the cache, following calls will use the cached values
+                
+                def startProgram = GetConfigurationProperty("StartProgram", resetCache = true);
+                if (!string.IsNullOrEmpty(startProgram))
+                    debugTargetInfo.bstrExe = startProgram;    
+                else
+                {
+                    mutable configKey : string; 
+                    _ = get_DisplayName(out configKey);
+                    debugTargetInfo.bstrExe = ProjectMgr.GetProjectOptions(configKey).OutputAssembly;
+                }  
+
+                def workingDirectory = GetConfigurationProperty(CommonConstants.WorkingDirectory, resetCache = false);
+                if (string.IsNullOrEmpty(workingDirectory))
+                    debugTargetInfo.bstrCurDir = Path.GetDirectoryName(debugTargetInfo.bstrExe);
+                else
+                {
+                    if (Path.IsPathRooted(workingDirectory))
+                        debugTargetInfo.bstrCurDir = workingDirectory;
+                    else
+                    {
+                        def path = Path.Combine(ProjectMgr.BaseURI.AbsoluteUrl, workingDirectory);
+
+                        debugTargetInfo.bstrCurDir = if (Directory.Exists(path)) path else workingDirectory;
+                    }
+                }
+
+                def cmdArgs = GetConfigurationProperty("CmdArgs", resetCache = false);
+                when (!string.IsNullOrEmpty(cmdArgs))
+                    debugTargetInfo.bstrArg = cmdArgs;
+
+                def	remoteDebugMachine = GetConfigurationProperty("RemoteDebugMachine", resetCache = false);
+                when (!string.IsNullOrEmpty(remoteDebugMachine))
+                    debugTargetInfo.bstrRemoteMachine = remoteDebugMachine;
+
+                def enableUnmanagedDebugging = GetConfigurationProperty("EnableUnmanagedDebugging", resetCache = false);
+                if (StringComparer.InvariantCultureIgnoreCase.Equals(enableUnmanagedDebugging, "true"))
+                    debugTargetInfo.clsidCustom = VSConstants.DebugEnginesGuids.ManagedAndNative;
+                else
+                    debugTargetInfo.clsidCustom = VSConstants.DebugEnginesGuids.ManagedOnly;
+                    
+                debugTargetInfo
+            }
+            
+            def debugTargetInfo = GetDebugTargetInfo();
+
+            def debugger = (ProjectMgr.Package :> NemerleProjectPackage).GetService.[IVsDebugger]();
+
+            def ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(debugTargetInfo));
+            try
+            {
+                Marshal.StructureToPtr(debugTargetInfo, ptr, false);
+                debugger.LaunchDebugTargets(1, ptr)
+            }
+            finally
+            {
+                when (ptr != IntPtr.Zero)
+                    Marshal.FreeCoTaskMem(ptr);
+            }
+        }
+    }
+}
