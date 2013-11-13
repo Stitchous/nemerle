@@ -50,27 +50,27 @@ namespace Nemerle.VisualStudio.Project
 		ActiveFileSharePath : string
 		    implements VSLangProj.ProjectProperties.ActiveFileSharePath
 		{
-			get { throw NotImplementedException() }
+			get { throw NotSupportedException() }
 		}
 
 		ActiveWebAccessMethod : VSLangProj.prjWebAccessMethod
 		    implements VSLangProj.ProjectProperties.ActiveWebAccessMethod
 		{
-			get { throw NotImplementedException() }
+			get { throw NotSupportedException() }
 		}
 
 		ApplicationIcon : string
 		    implements VSLangProj.ProjectProperties.ApplicationIcon
 		{
-			get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+			get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		AssemblyKeyContainerName : string 
 		    implements VSLangProj.ProjectProperties.AssemblyKeyContainerName
 		{
-			get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+			get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		AssemblyName : string
@@ -83,29 +83,29 @@ namespace Nemerle.VisualStudio.Project
 		AssemblyOriginatorKeyFile : string
 		    implements VSLangProj.ProjectProperties.AssemblyOriginatorKeyFile
 		{
-		    get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+		    get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		AssemblyOriginatorKeyMode : VSLangProj.prjOriginatorKeyMode
 		    implements VSLangProj.ProjectProperties.AssemblyOriginatorKeyMode
 		{
-			get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+			get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		DefaultClientScript : VSLangProj.prjScriptLanguage
 		    implements VSLangProj.ProjectProperties.DefaultClientScript
 		{
-			get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+			get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		DefaultHTMLPageLayout : VSLangProj.prjHTMLPageLayout
 		    implements VSLangProj.ProjectProperties.DefaultHTMLPageLayout
 		{
-			get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+			get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		DefaultNamespace : string
@@ -118,113 +118,113 @@ namespace Nemerle.VisualStudio.Project
 		DefaultTargetSchema : VSLangProj.prjTargetSchema
 		    implements VSLangProj.ProjectProperties.DefaultTargetSchema
 		{
-			get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+			get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		DelaySign : bool
 		    implements VSLangProj.ProjectProperties.DelaySign
 		{
-			get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+			get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		ExtenderCATIDVSLangProj : string
 		    implements VSLangProj.ProjectProperties.ExtenderCATID
 		{
-			get { throw NotImplementedException() }
+			get { throw NotSupportedException() }
 		}
 
 		ExtenderNamesVSLangProj : object
 		    implements VSLangProj.ProjectProperties.ExtenderNames
 		{
-			get { throw NotImplementedException() }
+			get { throw NotSupportedException() }
 		}
 
 		FileNameVSLangProj : string
 		    implements VSLangProj.ProjectProperties.FileName
 		{
-			get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+			get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		FileSharePath : string
 		    implements VSLangProj.ProjectProperties.FileSharePath
 		{
-			get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+			get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		FullPathVSLangProj : string
 		    implements VSLangProj.ProjectProperties.FullPath
 		{
-			get { throw NotImplementedException() }
+			get { throw NotSupportedException() }
 		}
 
 		LinkRepair : bool
 		    implements VSLangProj.ProjectProperties.LinkRepair
 		{
-			get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+			get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		LocalPath : string
 		    implements VSLangProj.ProjectProperties.LocalPath
 		{
-			get { throw NotImplementedException() }
+			get { throw NotSupportedException() }
 		}
 
 		OfflineURL : string
 		    implements VSLangProj.ProjectProperties.OfflineURL
 		{
-			get { throw NotImplementedException() }
+			get { throw NotSupportedException() }
 		}
 
 		OptionCompare : VSLangProj.prjCompare
 		    implements VSLangProj.ProjectProperties.OptionCompare
 		{
-			get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+			get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		OptionExplicit : VSLangProj.prjOptionExplicit
 		    implements VSLangProj.ProjectProperties.OptionExplicit
 		{
-			get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+			get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		OptionStrict : VSLangProj.prjOptionStrict
 		    implements VSLangProj.ProjectProperties.OptionStrict
 		{
-			get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+			get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		OutputFileName : string
 		    implements VSLangProj.ProjectProperties.OutputFileName
 		{
-			get { throw NotImplementedException() }
+			get { throw NotSupportedException() }
 		}
 
 		OutputType : VSLangProj.prjOutputType
 		    implements VSLangProj.ProjectProperties.OutputType
 		{
-			get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+			get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		ProjectType : VSLangProj.prjProjectType
 		    implements  VSLangProj.ProjectProperties.ProjectType
 		{
-			get { throw NotImplementedException() }
+			get { throw NotSupportedException() }
 		}
 
 		ReferencePath : string
 		    implements VSLangProj.ProjectProperties.ReferencePath
 		{
-			get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+			get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		[Browsable(false)]
@@ -238,57 +238,57 @@ namespace Nemerle.VisualStudio.Project
 		ServerExtensionsVersion : string
 		    implements VSLangProj.ProjectProperties.ServerExtensionsVersion
 		{
-			get { throw NotImplementedException(); }
+			get { throw NotSupportedException(); }
 		}
 
 		StartupObject : string
 		    implements VSLangProj.ProjectProperties.StartupObject
 		{
-			get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+			get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		URL : string
 		    implements VSLangProj.ProjectProperties.URL
 		{
-			get { throw NotImplementedException(); }
+			get { throw NotSupportedException(); }
 		}
 
 		WebAccessMethod : VSLangProj.prjWebAccessMethod
 		    implements VSLangProj.ProjectProperties.WebAccessMethod
 		{
-			get { throw NotImplementedException() }
-			set { throw NotImplementedException() }
+			get { throw NotSupportedException() }
+			set { throw NotSupportedException() }
 		}
 
 		WebServer : string
 		    implements VSLangProj.ProjectProperties.WebServer
 		{
-			get { throw NotImplementedException() }
+			get { throw NotSupportedException() }
 		}
 
 		WebServerVersion : string
 		    implements VSLangProj.ProjectProperties.WebServerVersion
 		{
-			get { throw NotImplementedException() }
+			get { throw NotSupportedException() }
 		}
 
 		__id : string 
 		    implements VSLangProj.ProjectProperties.__id
 		{
-			get { throw NotImplementedException() }
+			get { throw NotSupportedException() }
 		}
 
 		__project : object
 		    implements VSLangProj.ProjectProperties.__project
 		{
-			get { throw NotImplementedException() }
+			get { throw NotSupportedException() }
 		}
 
 		get_Extender(_ExtenderName : string) : object
 		    implements VSLangProj.ProjectProperties.get_Extender
 		{
-			throw NotImplementedException()
+			throw NotSupportedException()
 		}
 
 		#endregion

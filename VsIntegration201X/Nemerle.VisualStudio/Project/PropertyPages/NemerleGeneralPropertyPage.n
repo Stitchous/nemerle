@@ -1,31 +1,169 @@
 ﻿using Nemerle;
 using Nemerle.Collections;
+using Nemerle.Extensions;
 using Nemerle.Text;
 using Nemerle.Utility;
+using Nemerle.WPF;
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
+using System.ComponentModel;
+using System.IO;
+using System.Globalization;
 using System.Linq;
+using System.Windows.Forms;
 
 using Microsoft.VisualStudioTools.Project;
 
 namespace Nemerle.VisualStudio.Project.PropertyPages
 {
-  class NemerleGeneralPropertyPage : CommonPropertyPage
-  {
-    public override Apply() : void{ throw NotImplementedException() }
-    
-    public override Control : Control
+    [NotifyPropertyChanged]
+    class NemerleGeneralPropertyPage : PropertyPageBase
     {
-        get{ throw System.NotImplementedException() }
+        class OutputTypeToDescriptionConverter : EnumConverter
+        {
+            static ClassLibrary       = "Class Library";
+            static ConsoleApplication = "Console Application";
+            static WindowsApplication = "Windows Application";
+
+            this()
+            {
+                base(typeof(OutputType))
+            }
+
+            public override CanConvertFrom(_context : ITypeDescriptorContext, sourceType : Type) : bool
+            {
+                sourceType == typeof(string)
+            }
+
+            public override ConvertFrom(_context : ITypeDescriptorContext, _culture : CultureInfo, value : object) : object
+            {
+                match(value :> string)
+                {
+                    | ClassLibrary       => OutputType.Library
+                    | ConsoleApplication => OutputType.Exe
+                    | WindowsApplication => OutputType.WinExe
+                    | _                  => OutputType.Library
+                }
+            }
+
+            public override CanConvertTo(_context : ITypeDescriptorContext, destinationType : Type) : bool
+            {
+                destinationType == typeof(string)
+            }
+
+            public override ConvertTo(_context : ITypeDescriptorContext, _culture : CultureInfo , value : object, _destinationType : Type) : object
+            {
+                match(value :> OutputType)
+                {
+                    | OutputType.Library => ClassLibrary
+                    | OutputType.Exe     => ConsoleApplication
+                    | OutputType.WinExe  => WindowsApplication
+                }
+            }
+        }
+
+        static ApplicationCategoryName = "Application";
+        static ProjectCategoryName     = "Project";
+        
+        static StartupObjectPropertyName   = "StartupObject";
+	static ApplicationIconPropertyName = "ApplicationIcon";
+
+        public this()
+        {
+            PropertyChanged += _ => IsDirty = true;
+        }
+
+        #region Exposed Properties
+
+        [RefreshProperties(RefreshProperties.All)]
+        [Category(ApplicationCategoryName)]
+        [DisplayName("Assembly Name")]
+        [Description("The name of the output file that will hold assembly metadata.")]
+        public AssemblyName : string { get; set; }
+
+        [RefreshProperties(RefreshProperties.All)]
+        [Category(ApplicationCategoryName)]
+        [DisplayName("Output Type")]
+        [Description("The type of application to build.")]
+        [TypeConverter(typeof(OutputTypeToDescriptionConverter))]
+        public OutputType : OutputType { get; set; }
+
+        [Category(ApplicationCategoryName)]
+        [DisplayName("Default Namespace")]
+        [Description("Specifies the default namespace for added items, such as classes, that are added via the Add New Item Dialog Box.")]
+        public DefaultNamespace : string { get; set; }
+
+        [Category(ApplicationCategoryName)]
+        [DisplayName("Startup Object")]
+        [Description("The name of the class that contains the static Main method that you want called when you launch your application.")]
+        public StartupObject : string { get; set; }
+
+        [Category(ApplicationCategoryName)]
+        [DisplayName("Application Icon")]
+        [Description("Sets the .ico file to use as your application icon.")]
+        public ApplicationIcon : string { get; set; }
+
+        [Category(ProjectCategoryName)]
+        [DisplayName("Project File")]
+        [Description("The name of the file containing build, configuration, and other information about the project.")]
+        [AutomationBrowsable(false)]
+        public ProjectFile : string
+        {
+        	get { Path.GetFileName(Project.ProjectFile) }
+        }
+
+        [Category(ProjectCategoryName)]
+        [DisplayName("Project Folder")]
+        [Description("The absolute location of the project.")]
+        [AutomationBrowsable(false)]
+        public ProjectFolder : string
+        {
+        	get { Path.GetDirectoryName(Project.ProjectFolder) }
+        }
+
+        [Category(ProjectCategoryName)]
+        [DisplayName("Output File")]
+        [Description("The name of the project's primary output file.")]
+        [AutomationBrowsable(false)]
+        public OutputFile : string
+        {
+        	get { Evaluate(AssemblyName)/* + NemerleProjectNode.GetOutputExtension(_outputType)*/; }
+        }
+
+        #endregion
+
+        [Browsable(false)]
+        [AutomationBrowsable(false)]
+        public override Name : string
+        {
+            get { "General" }
+        }
+
+        public override Apply() : void 
+        {
+            SetPropertyValue(ProjectFileConstants.AssemblyName,  AssemblyName);
+            SetPropertyValue(ProjectFileConstants.OutputType,    this.OutputType.ToString());
+            SetPropertyValue(ProjectFileConstants.RootNamespace, DefaultNamespace);
+            SetPropertyValue(StartupObjectPropertyName,          StartupObject);
+            SetPropertyValue(ApplicationIconPropertyName,        ApplicationIcon);
+            
+            IsDirty = false;
+        }
+
+        public override LoadSettings() : void 
+        { 
+            AssemblyName     = GetPropertyValue(ProjectFileConstants.AssemblyName);
+            DefaultNamespace = GetPropertyValue(ProjectFileConstants.RootNamespace);
+            StartupObject    = GetPropertyValue(StartupObjectPropertyName);            
+            ApplicationIcon  = GetPropertyValue(ApplicationIconPropertyName);
+            
+            def outputType = GetPropertyValue(ProjectFileConstants.OutputType);
+            mutable parsedOutputType : OutputType;
+            when (Enum.TryParse.[OutputType](outputType, out parsedOutputType))
+               OutputType = parsedOutputType;
+			
+            IsDirty = false;
+        }
     }
-    
-    public override LoadSettings() : void{ throw NotImplementedException() }
-    
-    public override Name : string
-    {
-        get { "General" }
-    }
-  }
 }

@@ -1,0 +1,165 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Drawing;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+using System.Linq;
+using System.Security.Permissions;
+using System.Windows.Forms;
+
+using Microsoft.VisualStudioTools.Project;
+using Microsoft.VisualStudio.Designer.Interfaces;
+using Microsoft.VisualStudio.OLE.Interop;
+
+namespace Nemerle.VisualStudio.Project.PropertyPages
+{
+  abstract class SettingsPage : 
+        CommonPropertyPage,
+        ICustomTypeDescriptor,
+        IPropertyPage,
+        IDisposable
+  {
+    public Dispose() : void { throw System.NotImplementedException() }
+
+    #region ICustomTypeDescriptor
+
+    public GetAttributes() : AttributeCollection
+    { 
+        TypeDescriptor.GetAttributes(this, noCustomTypeDesc = true) 
+    }
+
+    public GetClassName() : string
+    { 
+        GetType().FullName;
+    }
+
+    public GetComponentName() : string
+    {
+        TypeDescriptor.GetComponentName(this, noCustomTypeDesc = true)
+    }
+
+    public GetConverter() : TypeConverter
+    { 
+        TypeDescriptor.GetConverter(this, noCustomTypeDesc = true)
+    }
+
+    public GetDefaultEvent() : EventDescriptor
+    { 
+        TypeDescriptor.GetDefaultEvent(this, noCustomTypeDesc = true)
+    }
+
+    public GetDefaultProperty() : PropertyDescriptor
+    {
+        TypeDescriptor.GetDefaultProperty(this, noCustomTypeDesc = true) 
+    }
+
+    public GetEditor(editorBaseType : Type) : object
+    {
+        TypeDescriptor.GetEditor(this, editorBaseType, noCustomTypeDesc = true)
+    }
+
+    public GetEvents(attributes : array[Attribute]) : EventDescriptorCollection
+    {
+        TypeDescriptor.GetEvents(this, attributes, noCustomTypeDesc = true)
+    }
+
+    public GetEvents() : EventDescriptorCollection
+    { 
+        TypeDescriptor.GetEvents(this, noCustomTypeDesc = true) 
+    }
+
+    public GetProperties(attributes : array[Attribute]) : PropertyDescriptorCollection
+    {
+        def designPropertyDescriptors = TypeDescriptor.
+                                            GetProperties(this, attributes, noCustomTypeDesc = true).
+		                                    Cast.[PropertyDescriptor]().
+		                                    Where(propDescriptor => propDescriptor.ComponentType == GetType()).
+                                            Select(propDescriptor => DesignPropertyDescriptor(propDescriptor));
+
+		PropertyDescriptorCollection(designPropertyDescriptors.ToArray())
+    }
+
+    public GetProperties() : PropertyDescriptorCollection
+    { 
+        GetProperties(array(0)) 
+    }
+
+    public GetPropertyOwner(_pd : PropertyDescriptor) : object
+    {
+        this
+    }
+
+    #endregion
+
+    [Browsable(false)]
+	[AutomationBrowsable(false)]
+    public override Control : Control
+    {
+        get { _panel }
+    }
+
+    internal override Project : CommonProjectNode
+    {
+        get { base.Project }
+        set
+        {
+            base.Project = value;
+            when (value != null)
+                InitializePropertyGrid();
+        }
+    }
+
+    private InitializePropertyGrid() : void
+    {
+        def CreateGrid()
+        {
+            def propertyBrowser = (Project.Package :> NemerleProjectPackage).GetService.[IVSMDPropertyBrowser]();
+            _grid = propertyBrowser.CreatePropertyGrid();
+
+            def gridControl = Control.FromHandle(IntPtr(_grid.Handle));
+            gridControl.Parent = _panel;
+            gridControl.Size = Size(544, 294);
+            gridControl.Location = Point(3, 3);
+            gridControl.Visible = true;
+
+            _grid.SetOption(_PROPERTYGRIDOPTION.PGOPT_TOOLBAR, false);
+            _grid.GridSort = _PROPERTYGRIDSORT.PGSORT_CATEGORIZED | _PROPERTYGRIDSORT.PGSORT_ALPHABETICAL;
+        }
+
+        def SetSelectedObject()
+        {
+            SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
+
+            def p = Marshal.GetIUnknownForObject(this);
+            def ppUnk = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(IntPtr)));
+            try
+            {
+                Marshal.WriteIntPtr(ppUnk, p);
+                LoadSettings();
+                // BUGBUG -- this is really bad casting a pointer to "int"...
+                _grid.SetSelectedObjects(1, ppUnk.ToInt32());
+                _grid.Refresh();
+            }
+            finally
+            {
+                when (ppUnk != IntPtr.Zero)
+                    Marshal.FreeCoTaskMem(ppUnk);
+                    
+                when (p != IntPtr.Zero)
+                    _ = Marshal.Release(p);
+            }
+        }
+            
+        CreateGrid();
+        SetSelectedObject();
+    }
+
+    private _panel : Panel = Panel();
+    private mutable _grid : IVSMDPropertyGrid;
+  }
+}

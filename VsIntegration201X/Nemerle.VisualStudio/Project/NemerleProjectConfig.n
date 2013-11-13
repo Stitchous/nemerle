@@ -30,14 +30,13 @@ namespace Nemerle.VisualStudio.Project
             {
                 def debugTargetInfo = VsDebugTargetInfo() <-
                 {
-                                      fSendStdoutToOutputWindow = 0;
-                                      dlo = DEBUG_LAUNCH_OPERATION.DLO_CreateProcess;
-                                      grfLaunch = flags;
+                    fSendStdoutToOutputWindow = 0;
+                    dlo = DEBUG_LAUNCH_OPERATION.DLO_CreateProcess;
+                    grfLaunch = flags;
                 };
                 debugTargetInfo.cbSize = Marshal.SizeOf(debugTargetInfo) :> uint;
 
                 // On first call, reset the cache, following calls will use the cached values
-                
                 def startProgram = GetConfigurationProperty("StartProgram", resetCache = true);
                 if (!string.IsNullOrEmpty(startProgram))
                     debugTargetInfo.bstrExe = startProgram;    
@@ -58,7 +57,6 @@ namespace Nemerle.VisualStudio.Project
                     else
                     {
                         def path = Path.Combine(ProjectMgr.BaseURI.AbsoluteUrl, workingDirectory);
-
                         debugTargetInfo.bstrCurDir = if (Directory.Exists(path)) path else workingDirectory;
                     }
                 }
@@ -87,7 +85,7 @@ namespace Nemerle.VisualStudio.Project
             def ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(debugTargetInfo));
             try
             {
-                Marshal.StructureToPtr(debugTargetInfo, ptr, false);
+                Marshal.StructureToPtr(debugTargetInfo, ptr, fDeleteOld = false);
                 debugger.LaunchDebugTargets(1, ptr)
             }
             finally

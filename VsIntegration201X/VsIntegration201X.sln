@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.VisualStudioTools
 EndProject
 Project("{EDCC3B85-0BAD-11DB-BC1A-00112FDE8B61}") = "Nemerle.VisualStudio", "Nemerle.VisualStudio\Nemerle.VisualStudio.nproj", "{67CDB852-248A-46DF-8020-9573D93D4741}"
 EndProject
+Project("{EDCC3B85-0BAD-11DB-BC1A-00112FDE8B61}") = "Nemerle.WPF-VS_2012", "..\snippets\Nemerle.WPF\Nemerle.WPF\Nemerle.WPF-VS_2012.nproj", "{1F6CA7DA-F1EF-4B4E-80E2-272C41761B3F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -18,6 +20,10 @@ Global
 		{67CDB852-248A-46DF-8020-9573D93D4741}.Debug|x86.Build.0 = Debug|x86
 		{67CDB852-248A-46DF-8020-9573D93D4741}.Release|x86.ActiveCfg = Release|x86
 		{67CDB852-248A-46DF-8020-9573D93D4741}.Release|x86.Build.0 = Release|x86
+		{1F6CA7DA-F1EF-4B4E-80E2-272C41761B3F}.Debug|x86.ActiveCfg = Debug|x86
+		{1F6CA7DA-F1EF-4B4E-80E2-272C41761B3F}.Debug|x86.Build.0 = Debug|x86
+		{1F6CA7DA-F1EF-4B4E-80E2-272C41761B3F}.Release|x86.ActiveCfg = Release|x86
+		{1F6CA7DA-F1EF-4B4E-80E2-272C41761B3F}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
