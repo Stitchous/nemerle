@@ -92,9 +92,27 @@ namespace Nemerle.VisualStudio.Project
             String.Equals(ext, NemerleConstants.FileExtension, StringComparison.OrdinalIgnoreCase);
         }
         
+        internal static GetOutputExtension(outputType : OutputType) : string 
+        {
+            | Library => ".dll"
+            | WinExe
+            | Exe     => ".exe"
+        }
+        
         public override MakeConfiguration(activeConfigName : string) : CommonProjectConfig
         {
             NemerleProjectConfig(this, activeConfigName);
         }
+        
+        protected override GetConfigurationDependentPropertyPages() : array[Guid]
+        { 
+            array[typeof(NemerleBuildPropertyPage).GUID]
+        }
+        
+        protected override CreateConfigProvider() : ConfigProvider
+        { 
+            NemerleConfigProvider(this)
+        }
+        
     }
 }

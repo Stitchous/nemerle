@@ -25,6 +25,7 @@ namespace Nemerle.VisualStudio.Project
         internal override CreateProject() : ProjectNode
         {
             def project = NemerleProjectNode(Package);
+            
             _ = project.SetSite(Package.GetService.[IOleServiceProvider]());
             project
         }

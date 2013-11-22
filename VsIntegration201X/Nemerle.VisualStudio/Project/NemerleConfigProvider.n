@@ -1,0 +1,37 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Microsoft.VisualStudioTools.Project;
+using Microsoft.VisualStudio.VSConstants;
+
+namespace Nemerle.VisualStudio.Project
+{
+    class NemerleConfigProvider : CommonConfigProvider
+    {
+        internal this(project : NemerleProjectNode)
+        {
+            base(project)
+        }
+        
+        public override GetPlatformNames(_celt : uint, names : array[string], actual : array[uint]) : int
+        {
+            when (names != null) 
+            {
+                names[0] = ProjectConfig.AnyCPU;
+            }
+
+            when (actual != null) 
+            {
+                actual[0] = 1;
+            }
+
+            S_OK
+        }
+    }
+}

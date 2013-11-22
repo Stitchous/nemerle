@@ -18,7 +18,7 @@ using Microsoft.VisualStudioTools.Project;
 namespace Nemerle.VisualStudio.Project.PropertyPages
 {
     [NotifyPropertyChanged]
-    class NemerleGeneralPropertyPage : PropertyPageBase
+    class NemerleGeneralPropertyPage : NemerleGridBasedPropertyPage
     {
         class OutputTypeToDescriptionConverter : EnumConverter
         {
@@ -65,16 +65,13 @@ namespace Nemerle.VisualStudio.Project.PropertyPages
 
         static ApplicationCategoryName = "Application";
         static ProjectCategoryName     = "Project";
-        
-        static StartupObjectPropertyName   = "StartupObject";
-	static ApplicationIconPropertyName = "ApplicationIcon";
-
-        public this()
-        {
-            PropertyChanged += _ => IsDirty = true;
-        }
 
         #region Exposed Properties
+        
+        [Category(ApplicationCategoryName)]
+        [DisplayName("Application Icon")]
+        [Description("Sets the .ico file to use as your application icon.")]
+        public ApplicationIcon : string { get; set; }
 
         [RefreshProperties(RefreshProperties.All)]
         [Category(ApplicationCategoryName)]
@@ -82,6 +79,11 @@ namespace Nemerle.VisualStudio.Project.PropertyPages
         [Description("The name of the output file that will hold assembly metadata.")]
         public AssemblyName : string { get; set; }
 
+        [Category(ApplicationCategoryName)]
+        [DisplayName("Default Namespace")]
+        [Description("Specifies the default namespace for added items, such as classes, that are added via the Add New Item Dialog Box.")]
+        public DefaultNamespace : string { get; set; }
+        
         [RefreshProperties(RefreshProperties.All)]
         [Category(ApplicationCategoryName)]
         [DisplayName("Output Type")]
@@ -90,19 +92,18 @@ namespace Nemerle.VisualStudio.Project.PropertyPages
         public OutputType : OutputType { get; set; }
 
         [Category(ApplicationCategoryName)]
-        [DisplayName("Default Namespace")]
-        [Description("Specifies the default namespace for added items, such as classes, that are added via the Add New Item Dialog Box.")]
-        public DefaultNamespace : string { get; set; }
-
-        [Category(ApplicationCategoryName)]
         [DisplayName("Startup Object")]
         [Description("The name of the class that contains the static Main method that you want called when you launch your application.")]
         public StartupObject : string { get; set; }
-
-        [Category(ApplicationCategoryName)]
-        [DisplayName("Application Icon")]
-        [Description("Sets the .ico file to use as your application icon.")]
-        public ApplicationIcon : string { get; set; }
+        
+        [Category(ProjectCategoryName)]
+        [DisplayName("Output File")]
+        [Description("The name of the project's primary output file.")]
+        [AutomationBrowsable(false)]
+        public OutputFile : string
+        {
+        	get { Project.BuildProject.ExpandString(AssemblyName) + NemerleProjectNode.GetOutputExtension(OutputType) }
+        }
 
         [Category(ProjectCategoryName)]
         [DisplayName("Project File")]
@@ -122,48 +123,31 @@ namespace Nemerle.VisualStudio.Project.PropertyPages
         	get { Path.GetDirectoryName(Project.ProjectFolder) }
         }
 
-        [Category(ProjectCategoryName)]
-        [DisplayName("Output File")]
-        [Description("The name of the project's primary output file.")]
-        [AutomationBrowsable(false)]
-        public OutputFile : string
-        {
-        	get { Evaluate(AssemblyName)/* + NemerleProjectNode.GetOutputExtension(_outputType)*/; }
-        }
-
         #endregion
 
         [Browsable(false)]
         [AutomationBrowsable(false)]
-        public override Name : string
+        public override PageName : string
         {
             get { "General" }
         }
 
-        public override Apply() : void 
+        protected override SaveSettings() : void 
         {
-            SetPropertyValue(ProjectFileConstants.AssemblyName,  AssemblyName);
-            SetPropertyValue(ProjectFileConstants.OutputType,    this.OutputType.ToString());
-            SetPropertyValue(ProjectFileConstants.RootNamespace, DefaultNamespace);
-            SetPropertyValue(StartupObjectPropertyName,          StartupObject);
-            SetPropertyValue(ApplicationIconPropertyName,        ApplicationIcon);
-            
-            IsDirty = false;
+            SetProperty(NemerleProjectFileConstants.ApplicationIcon, ApplicationIcon);
+            SetProperty(ProjectFileConstants.AssemblyName,           AssemblyName);
+            SetProperty(ProjectFileConstants.RootNamespace,          DefaultNamespace);
+            SetProperty(ProjectFileConstants.OutputType,             this.OutputType.ToString());
+            SetProperty(NemerleProjectFileConstants.StartupObject,   StartupObject);
         }
 
-        public override LoadSettings() : void 
+        protected override LoadSettings() : void 
         { 
-            AssemblyName     = GetPropertyValue(ProjectFileConstants.AssemblyName);
-            DefaultNamespace = GetPropertyValue(ProjectFileConstants.RootNamespace);
-            StartupObject    = GetPropertyValue(StartupObjectPropertyName);            
-            ApplicationIcon  = GetPropertyValue(ApplicationIconPropertyName);
-            
-            def outputType = GetPropertyValue(ProjectFileConstants.OutputType);
-            mutable parsedOutputType : OutputType;
-            when (Enum.TryParse.[OutputType](outputType, out parsedOutputType))
-               OutputType = parsedOutputType;
-			
-            IsDirty = false;
+            ApplicationIcon  = GetProperty(NemerleProjectFileConstants.ApplicationIcon);
+            AssemblyName     = GetProperty(ProjectFileConstants.AssemblyName);
+            DefaultNamespace = GetProperty(ProjectFileConstants.RootNamespace);
+            OutputType       = GetProperty(ProjectFileConstants.OutputType);
+            StartupObject    = GetProperty(NemerleProjectFileConstants.StartupObject);
         }
     }
 }

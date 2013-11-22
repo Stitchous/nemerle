@@ -10,6 +10,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Linq;
 
+using Microsoft.Build.Execution;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudioTools;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -19,9 +20,21 @@ namespace Nemerle.VisualStudio.Project
 {
     class NemerleProjectConfig : CommonProjectConfig  
     {
-        public this(project : CommonProjectNode, configuration : string)
+        static ConditionFormatString = " '$(Configuration)|$(Platform)' == '{0}' ";
+        
+        public this(project : NemerleProjectNode, configuration : string)
         {
             base(project, configuration);
+        }
+        
+        public Condition : string
+        {
+            get 
+            { 
+                mutable configDisplayName;
+                _ = get_DisplayName(out configDisplayName);
+                String.Format(ConditionFormatString, configDisplayName)
+            }
         }
 
         public override DebugLaunch(flags : uint) : int 
@@ -42,7 +55,7 @@ namespace Nemerle.VisualStudio.Project
                     debugTargetInfo.bstrExe = startProgram;    
                 else
                 {
-                    mutable configKey : string; 
+                    mutable configKey; 
                     _ = get_DisplayName(out configKey);
                     debugTargetInfo.bstrExe = ProjectMgr.GetProjectOptions(configKey).OutputAssembly;
                 }  

@@ -11,6 +11,7 @@ using Microsoft.VisualStudioTools;
 using Microsoft.VisualStudioTools.Navigation;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.VSConstants;
 
 namespace Nemerle.VisualStudio.Navigation
 {
@@ -44,7 +45,7 @@ namespace Nemerle.VisualStudio.Navigation
         public override GetLibGuid(pGuid : out Guid) : int 
         {
             pGuid = Guid(CommonConstants.LibraryGuid);
-            VSConstants.S_OK
+            S_OK
         }
     }
 }

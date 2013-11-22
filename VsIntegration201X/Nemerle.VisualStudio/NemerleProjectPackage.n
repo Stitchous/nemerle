@@ -29,6 +29,7 @@ namespace Nemerle.VisualStudio
                            LanguageVsTemplate = LanguageName)]
     [ProvideEditorExtension(typeof(NemerleEditorFactory), FileExtension, 50, ProjectGuid = VSConstants.CLSID.MiscellaneousFilesProject_string)]
     [ProvideObject(typeof(NemerleGeneralPropertyPage))]
+    [ProvideObject(typeof(NemerleBuildPropertyPage))]
     public class NemerleProjectPackage : CommonProjectPackage 
     {   
 		public override CreateEditorFactory() : CommonEditorFactory

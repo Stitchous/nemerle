@@ -1,0 +1,85 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+using Nemerle.WPF;
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+using System.Linq;
+
+using Microsoft.VisualStudioTools.Project;
+
+namespace Nemerle.VisualStudio.Project.PropertyPages
+{
+    [NotifyPropertyChanged]
+    class NemerleBuildPropertyPage : NemerleGridBasedPropertyPage
+    {
+        static BuildCategoryName = "Build";
+		
+        #region Exposed Properties
+
+        [Category(BuildCategoryName)]
+        [DisplayName("Conditional compilation symbols")]
+        [Description("Specifies symbols on which to perform conditional compilation. Separate symbols with a semicolon.")]
+        public DefineConstants : string { get; set; }
+        
+        [Category(BuildCategoryName)]
+        [DisplayName("Debug symbols")]
+        [Description("Defines whether to create *.pdb file containing debug symbols")]
+        public DebugSymbols : bool { get; set; }
+        
+        [RefreshProperties(RefreshProperties.All)]
+        [Category(BuildCategoryName)]
+        [DisplayName("Output Path")]
+        [Description("The path to the primary output")]
+        public OutputPath : string { get; set; }
+        
+        [Category(BuildCategoryName)]
+        [DisplayName("Run debugger")]
+        [Description("Sets '-debbuger' compiler option and causes assert dialog display for user can start compiler debug session. Affects only debug compiler build.")]
+        public RunDebugger : bool { get; set; }
+
+        [Category(BuildCategoryName)]
+        [DisplayName("XML documentation file")]
+        [Description("Specifies the name of a file into which documentation comments will be processed.")]
+        public DocumentationFile : string { get; set; }
+
+        [Category(SR.BuildCaption)]
+        [DisplayName("Output Path (final value)")]
+        [Description("The path to the primary output")]
+        public OutputPathFinalValue : string
+        {
+            get { if (OutputPath != null) Project.BuildProject.ExpandString(OutputPath) else null }
+        }
+
+        #endregion
+
+        [Browsable(false)]
+        [AutomationBrowsable(false)]
+        public override PageName : string
+        {
+            get { BuildCategoryName }
+        }
+        
+        protected override SaveSettings() : void 
+        {
+            SetProperty(NemerleProjectFileConstants.DefineConstants,   DefineConstants);
+            SetProperty(NemerleProjectFileConstants.DebugSymbols,      DebugSymbols);
+			SetProperty(NemerleProjectFileConstants.OutputPath,        OutputPath);
+			SetProperty(NemerleProjectFileConstants.RunDebugger,       RunDebugger);
+			SetProperty(NemerleProjectFileConstants.DocumentationFile, DocumentationFile);
+        }
+
+        protected override LoadSettings() : void 
+        {
+            DefineConstants   = GetProperty(NemerleProjectFileConstants.DefineConstants);
+            DebugSymbols      = GetProperty(NemerleProjectFileConstants.DebugSymbols);
+			OutputPath        = GetProperty(NemerleProjectFileConstants.OutputPath);
+			RunDebugger       = GetProperty(NemerleProjectFileConstants.RunDebugger);
+			DocumentationFile = GetProperty(NemerleProjectFileConstants.DocumentationFile);
+        }
+    }
+}

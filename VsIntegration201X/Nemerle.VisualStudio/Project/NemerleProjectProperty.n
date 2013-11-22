@@ -1,0 +1,112 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+
+using Microsoft.VisualStudioTools.Project;
+
+namespace Nemerle.VisualStudio.Project
+{
+    [Record(Exclude = [_perConfig])]
+    class NemerleProjectProperty
+    {   
+        internal GetValue[T](projectConfigs : IEnumerable.[ProjectConfig]) : T
+        {
+            def GetPerConfigValue()
+            {
+                def values = projectConfigs.
+                                    Select((c, i) => c.GetConfigurationProperty(_propertyName, resetCache = (i == 0))).
+                                    GroupBy(v => v).
+                                    NToList();
+
+                match(values)
+                {
+                    | [unifiedValue] => unifiedValue.Key
+                    | _ => null
+                }
+            }
+            
+            def GetStringValue()
+            {
+                if(!_perConfig.Value)
+                    _project.BuildProject.GetPropertyValue(_propertyName) ?? string.Empty
+                else
+                    GetPerConfigValue()
+            }
+            
+            if(typeof(T)==typeof(string))
+            {
+                GetStringValue() :> T
+            }
+            else if(typeof(T)==typeof(bool))
+            {
+                mutable boolValue;
+                if (bool.TryParse(GetStringValue(), out boolValue)) (boolValue :> T) else default(T)
+            }
+            else if (typeof(T).IsEnum)
+            {
+                try
+                {
+                    Enum.Parse(typeof(T), GetStringValue()) :> T
+                }
+                catch
+                {
+                    | _ => default(T)
+                }
+            }
+            else
+            {
+                throw NotSupportedException($"Can't read property $_propertyName of type $(typeof(T)).")
+            }
+        }
+
+        internal SetValue(value : object, projectConfigs : IEnumerable.[NemerleProjectConfig]) : void
+        {
+            def SetPerConfigValue(propValue)
+            {
+                def buildProject = _project.BuildProject;
+                foreach (configCondition in projectConfigs.Select(_.Condition))
+                {
+                    def propGroups = buildProject.Xml.PropertyGroups.Where(p => StringComparer.Ordinal.Equals(p.Condition, configCondition));
+                    foreach (propGroup in propGroups)
+                    {
+                         _ = propGroup.SetProperty(_propertyName, propValue);
+                    }
+                    otherwise
+                    {
+                        def newPropGroup = buildProject.Xml.AddPropertyGroup();
+                        newPropGroup.Condition = configCondition;
+                        _ = newPropGroup.SetProperty(_propertyName, propValue);
+                    }
+                    
+                    buildProject.ReevaluateIfNecessary();
+                }
+            }
+            
+            if(!_perConfig.Value)
+                _project.SetProjectProperty(_propertyName, value?.ToString());
+            else
+                SetPerConfigValue(value?.ToString());
+                
+            _project.SetIsDirty(true);
+        }
+
+        static NonPerConfigProperties : array[string] = array
+            [ 
+                    ProjectFileConstants.AssemblyName,
+                    ProjectFileConstants.OutputType,  
+                    ProjectFileConstants.RootNamespace,
+                    NemerleProjectFileConstants.StartupObject,  
+                    NemerleProjectFileConstants.ApplicationIcon
+            ];
+
+        _project : NemerleProjectNode; 
+        _propertyName : string;
+        _perConfig : Lazy.[bool] = Lazy(() => !NonPerConfigProperties.Contains(_propertyName));
+    }       
+}

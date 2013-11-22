@@ -21,6 +21,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\x86\Debug\Microsoft.VisualStudioTools.Project.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -31,6 +32,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\x86\Release\Microsoft.VisualStudioTools.Project.XML</DocumentationFile>
   </PropertyGroup>
   <Choose>
     <When Condition="'$(VSTarget)' == '10.0'">
@@ -264,6 +266,7 @@
     <Compile Include="ProjectNode.cs" />
     <Compile Include="ProjectNode.Events.cs" />
     <Compile Include="ProjectNode.IOleCommandTarget.cs" />
+    <Compile Include="ProjectNode.Modifications.cs" />
     <Compile Include="ProjectPackage.cs" />
     <Compile Include="ProjectReferenceNode.cs" />
     <Compile Include="ProjectResources.cs" />

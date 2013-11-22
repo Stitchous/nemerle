@@ -2,6 +2,7 @@
 using Nemerle.Collections;
 using Nemerle.Text;
 using Nemerle.Utility;
+using Nemerle.WPF;
 
 using System;
 using System.Drawing;
@@ -18,14 +19,68 @@ using Microsoft.VisualStudio.OLE.Interop;
 
 namespace Nemerle.VisualStudio.Project.PropertyPages
 {
-  abstract class SettingsPage : 
-        CommonPropertyPage,
-        ICustomTypeDescriptor,
-        IPropertyPage,
-        IDisposable
+  [NotifyPropertyChanged]
+  abstract class NemerleGridBasedPropertyPage : NemerlePropertyPage, ICustomTypeDescriptor
   {
-    public Dispose() : void { throw System.NotImplementedException() }
+      protected this()
+      {
+          PropertyChanged += {_ => IsDirty = true; }
+      }
+      
+    protected override CreatePropertiesControl(panel : Panel) : void
+    {
+        def CreateGrid()
+        {
+            def propertyBrowser = (Project.Package :> NemerleProjectPackage).GetService.[IVSMDPropertyBrowser]();
+            def grid = propertyBrowser.CreatePropertyGrid();
 
+            def gridControl = Control.FromHandle(IntPtr(grid.Handle));
+            gridControl.Parent = panel;
+            gridControl.Size = Size(544, 294);
+            gridControl.Location = Point(3, 3);
+            gridControl.Visible = true;
+
+            grid.SetOption(_PROPERTYGRIDOPTION.PGOPT_TOOLBAR, false);
+            grid.GridSort = _PROPERTYGRIDSORT.PGSORT_CATEGORIZED | _PROPERTYGRIDSORT.PGSORT_ALPHABETICAL;
+            
+            panel.SizeChanged += (_, _) => { gridControl.Width = panel.Width - 3 }
+            
+            PropertyChanged += _ => 
+                               {
+                                   IsDirty = true;
+                                   grid.Refresh();
+                               }
+            
+            grid
+        }
+
+        def SetSelectedObject(grid)
+        {
+            SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
+
+            def p = Marshal.GetIUnknownForObject(this);
+            def ppUnk = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(IntPtr)));
+            try
+            {
+                Marshal.WriteIntPtr(ppUnk, p);
+                LoadSettings();
+                // BUGBUG -- this is really bad casting a pointer to "int"...
+                grid.SetSelectedObjects(1, ppUnk.ToInt32());
+                grid.Refresh();
+            }
+            finally
+            {
+                when (ppUnk != IntPtr.Zero)
+                    Marshal.FreeCoTaskMem(ppUnk);
+                    
+                when (p != IntPtr.Zero)
+                    _ = Marshal.Release(p);
+            }
+        }
+            
+        CreateGrid() |> SetSelectedObject;
+    }
+    
     #region ICustomTypeDescriptor
 
     public GetAttributes() : AttributeCollection
@@ -95,71 +150,5 @@ namespace Nemerle.VisualStudio.Project.PropertyPages
     }
 
     #endregion
-
-    [Browsable(false)]
-	[AutomationBrowsable(false)]
-    public override Control : Control
-    {
-        get { _panel }
-    }
-
-    internal override Project : CommonProjectNode
-    {
-        get { base.Project }
-        set
-        {
-            base.Project = value;
-            when (value != null)
-                InitializePropertyGrid();
-        }
-    }
-
-    private InitializePropertyGrid() : void
-    {
-        def CreateGrid()
-        {
-            def propertyBrowser = (Project.Package :> NemerleProjectPackage).GetService.[IVSMDPropertyBrowser]();
-            _grid = propertyBrowser.CreatePropertyGrid();
-
-            def gridControl = Control.FromHandle(IntPtr(_grid.Handle));
-            gridControl.Parent = _panel;
-            gridControl.Size = Size(544, 294);
-            gridControl.Location = Point(3, 3);
-            gridControl.Visible = true;
-
-            _grid.SetOption(_PROPERTYGRIDOPTION.PGOPT_TOOLBAR, false);
-            _grid.GridSort = _PROPERTYGRIDSORT.PGSORT_CATEGORIZED | _PROPERTYGRIDSORT.PGSORT_ALPHABETICAL;
-        }
-
-        def SetSelectedObject()
-        {
-            SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
-
-            def p = Marshal.GetIUnknownForObject(this);
-            def ppUnk = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(IntPtr)));
-            try
-            {
-                Marshal.WriteIntPtr(ppUnk, p);
-                LoadSettings();
-                // BUGBUG -- this is really bad casting a pointer to "int"...
-                _grid.SetSelectedObjects(1, ppUnk.ToInt32());
-                _grid.Refresh();
-            }
-            finally
-            {
-                when (ppUnk != IntPtr.Zero)
-                    Marshal.FreeCoTaskMem(ppUnk);
-                    
-                when (p != IntPtr.Zero)
-                    _ = Marshal.Release(p);
-            }
-        }
-            
-        CreateGrid();
-        SetSelectedObject();
-    }
-
-    private _panel : Panel = Panel();
-    private mutable _grid : IVSMDPropertyGrid;
   }
 }

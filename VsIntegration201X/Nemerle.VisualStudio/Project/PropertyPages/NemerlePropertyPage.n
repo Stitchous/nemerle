@@ -1,0 +1,236 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Extensions;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.VSConstants;
+using Microsoft.VisualStudioTools.Project;
+
+namespace Nemerle.VisualStudio.Project.PropertyPages
+{
+    public abstract class NemerlePropertyPage : IPropertyPage2
+    {
+        [Browsable(false)]
+        [AutomationBrowsable(false)]
+        public abstract PageName : string { get; }
+        
+        [Browsable(false)]
+        [AutomationBrowsable(false)]
+        public IsDirty : bool
+        {
+            get { _isDirty }
+            set
+            {
+                _isDirty = value;
+                _pageSite?.OnStatusChange((if(_isDirty) PropPageStatus.Dirty else PropPageStatus.Clean) :> uint);    
+            }
+        }
+        
+        [Browsable(false)]
+        [AutomationBrowsable(false)]
+        internal Project : NemerleProjectNode 
+        { 
+            get { _project; } 
+            private set 
+            {
+                match(_project, value)
+                {
+                    | (_, null) => _project = value
+                    | (null, _) => 
+                        _project = value;
+                        _project.SetOpened();
+                        CreatePropertiesControl(_panel);
+                    | _ when _project : object == value => ()
+                    | _ => assert(false, "Project reset is not supported.")  
+                }
+            } 
+        }
+        
+        private ProjectConfigs : IList.[NemerleProjectConfig] { get; set; }
+        
+        protected abstract CreatePropertiesControl(panel : Panel) : void;
+        
+        protected abstract LoadSettings() : void;
+        protected abstract SaveSettings() : void;
+        
+        protected GetProperty[T](propertyName : string) : T
+        {
+            def property = NemerleProjectProperty(Project, propertyName);
+            property.GetValue.[T](ProjectConfigs ?? [])
+        }
+        
+        protected SetProperty(propertyName : string, value : object) : void
+        {
+            def property = NemerleProjectProperty(Project, propertyName);
+            property.SetValue(value, ProjectConfigs ?? []);
+        }
+        
+        #region IPropertyPage Members
+
+        public virtual Activate(hWndParent : IntPtr, pRect : array[RECT], _bModal : int) : void
+        {
+            ResizePanel(pRect[0]);
+            _ = NativeMethods.SetParent(_panel.Handle, hWndParent);
+        }
+        
+        Apply2() : void
+            implements IPropertyPage2.Apply
+        { 
+            SaveSettings();
+            IsDirty = false;
+        }
+
+        public Apply() : int 
+        { 
+            try
+            {
+                Apply2();
+                S_OK
+            }
+            catch
+            {
+                | e => Marshal.GetHRForException(e)
+            }  
+        }
+
+        public Deactivate() : void 
+        { 
+            _panel.Dispose(); 
+        }
+        
+        public EditProperty(_DISPID : int) : void { }
+
+        public GetPageInfo(pPageInfo : array[PROPPAGEINFO]) : void
+        {
+            pPageInfo[0] = PROPPAGEINFO() <-
+            {
+                cb = Marshal.SizeOf(typeof(PROPPAGEINFO)) :> uint;
+                pszTitle = PageName;
+                SIZE = SIZE() <-
+                {
+                    cx = _panel.Width;
+                    cy = _panel.Height;
+                }
+            }
+        }
+
+        public Help(_pszHelpDir : string) : void { }
+
+        public IsPageDirty() : int 
+        { 
+            if(IsDirty) S_OK else S_FALSE
+        }
+
+        public Move(pRect : array[RECT]) : void
+        {
+            ResizePanel(pRect[0]);
+        }
+
+        public SetObjects(cObjects : uint, ppunk : array[object]) : void
+        {
+            def InitFromProjectConfigs(projectConfigs)
+            {
+                Project = projectConfigs.First().ProjectMgr :> NemerleProjectNode;
+                
+                ProjectConfigs = ppunk.Cast.[NemerleProjectConfig]().ToList();
+            }
+            
+            def GetConfigs(nodeProperties)
+            {
+                mutable provider;
+                _ = ErrorHandler.ThrowOnFailure(nodeProperties.HierarchyNode.ProjectMgr.GetCfgProvider(out provider));
+                def expected = array(1);
+                _ = ErrorHandler.ThrowOnFailure(provider.GetCfgs(0, null, expected, null));
+                if (expected[0] == 0)
+                {
+                    []
+                }
+                else
+                {
+                    def configs = array(expected[0] :> int);
+                    def actual = array(1);            
+                    _ = ErrorHandler.ThrowOnFailure(provider.GetCfgs(expected[0], configs, actual, null));
+                    configs
+                }
+            }
+            
+            def InitFromNodeProperties(nodeProperties)
+            {
+                Project = nodeProperties.First().HierarchyNode.ProjectMgr :> NemerleProjectNode;
+                
+                ProjectConfigs = nodeProperties.
+                                    SelectMany(GetConfigs).
+                                    Cast.[NemerleProjectConfig]().
+                                    GroupBy(_.ConfigName).
+                                    Select(configs => configs.First()).
+                                    ToList();
+            }
+            
+            match(ppunk?.NToList())
+            {
+                | _ when cObjects == 0 => Project = null
+                | obj :: _ => 
+                    match(obj)
+                    {
+                        | ProjectConfig  => InitFromProjectConfigs(ppunk.Cast.[ProjectConfig]())
+                        | NodeProperties => InitFromNodeProperties(ppunk.Cast.[NodeProperties]())
+                        | _ => ()
+                    }
+                | _ => ()
+            }
+            
+            when(Project != null)
+            {
+                LoadSettings();
+                IsDirty = false;
+            }
+        }
+
+        public SetPageSite(pPageSite : IPropertyPageSite) : void
+        {
+            _pageSite = pPageSite;
+        }
+
+        public Show(nCmdShow : uint) : void
+        {
+            if (nCmdShow == 0)
+            {
+                _panel.Hide();
+            }
+            else
+            {
+                _panel.Show();
+            }
+        }
+
+        public TranslateAccelerator(_pMsg : array[MSG]) : int
+        {
+            S_FALSE
+        } 
+
+        #endregion
+        
+        private ResizePanel(rect : RECT) : void
+        {
+            _panel.Location = Point(rect.left, rect.top);
+            _panel.Size = Size(rect.right - rect.left, rect.bottom - rect.top);
+        }
+    
+        mutable _project  : NemerleProjectNode; 
+        mutable _isDirty  : bool;
+        mutable _pageSite : IPropertyPageSite;
+        _panel : Panel = Panel();
+    }
+}

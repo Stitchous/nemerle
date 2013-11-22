@@ -113,6 +113,9 @@
     <Compile Include="NemerleToolsPackage.n">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Project\NemerleConfigProvider.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Project\NemerleEditorFactory.n">
       <SubType>Code</SubType>
     </Compile>
@@ -122,22 +125,31 @@
     <Compile Include="Project\NemerleProjectFactory.n">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Project\NemerleProjectFileConstants.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Project\NemerleProjectNode.n">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Project\NemerleProjectNodeProperties.n">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Project\NemerleProjectProperty.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Project\OutputType.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Project\PropertyPages\NemerleBuildPropertyPage.n">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Project\PropertyPages\NemerleGeneralPropertyPage.n">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Project\PropertyPages\PropertyPageBase.n">
+    <Compile Include="Project\PropertyPages\NemerleGridBasedPropertyPage.n">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Project\PropertyPages\SettingsPage.n">
+    <Compile Include="Project\PropertyPages\NemerlePropertyPage.n">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.n" />
