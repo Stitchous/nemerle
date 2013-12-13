@@ -28,7 +28,7 @@ namespace Nemerle.VisualStudio.Project.PropertyPages
 
             this()
             {
-                base(typeof(OutputType))
+                base(typeof(NemerleOutputType))
             }
 
             public override CanConvertFrom(_context : ITypeDescriptorContext, sourceType : Type) : bool
@@ -40,10 +40,10 @@ namespace Nemerle.VisualStudio.Project.PropertyPages
             {
                 match(value :> string)
                 {
-                    | ClassLibrary       => OutputType.Library
-                    | ConsoleApplication => OutputType.Exe
-                    | WindowsApplication => OutputType.WinExe
-                    | _                  => OutputType.Library
+                    | ClassLibrary       => NemerleOutputType.Library
+                    | ConsoleApplication => NemerleOutputType.Exe
+                    | WindowsApplication => NemerleOutputType.WinExe
+                    | _                  => NemerleOutputType.Library
                 }
             }
 
@@ -52,13 +52,13 @@ namespace Nemerle.VisualStudio.Project.PropertyPages
                 destinationType == typeof(string)
             }
 
-            public override ConvertTo(_context : ITypeDescriptorContext, _culture : CultureInfo , value : object, _destinationType : Type) : object
+            public override ConvertTo(_ : ITypeDescriptorContext, _ : CultureInfo, value : object, _ : Type) : object
             {
-                match(value :> OutputType)
+                match(value :> NemerleOutputType)
                 {
-                    | OutputType.Library => ClassLibrary
-                    | OutputType.Exe     => ConsoleApplication
-                    | OutputType.WinExe  => WindowsApplication
+                    | Library => ClassLibrary
+                    | Exe     => ConsoleApplication
+                    | WinExe  => WindowsApplication
                 }
             }
         }
@@ -89,7 +89,7 @@ namespace Nemerle.VisualStudio.Project.PropertyPages
         [DisplayName("Output Type")]
         [Description("The type of application to build.")]
         [TypeConverter(typeof(OutputTypeToDescriptionConverter))]
-        public OutputType : OutputType { get; set; }
+        public OutputType : NemerleOutputType { get; set; }
 
         [Category(ApplicationCategoryName)]
         [DisplayName("Startup Object")]
@@ -137,7 +137,7 @@ namespace Nemerle.VisualStudio.Project.PropertyPages
             SetProperty(NemerleProjectFileConstants.ApplicationIcon, ApplicationIcon);
             SetProperty(ProjectFileConstants.AssemblyName,           AssemblyName);
             SetProperty(ProjectFileConstants.RootNamespace,          DefaultNamespace);
-            SetProperty(ProjectFileConstants.OutputType,             this.OutputType.ToString());
+            SetProperty(ProjectFileConstants.OutputType,             this.OutputType);
             SetProperty(NemerleProjectFileConstants.StartupObject,   StartupObject);
         }
 

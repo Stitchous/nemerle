@@ -15,6 +15,15 @@ namespace Nemerle.VisualStudio.Project
     [Record(Exclude = [_perConfig])]
     class NemerleProjectProperty
     {   
+        static NonPerConfigProperties : array[string] = array
+            [ 
+                    ProjectFileConstants.AssemblyName,
+                    ProjectFileConstants.OutputType,  
+                    ProjectFileConstants.RootNamespace,
+                    NemerleProjectFileConstants.StartupObject,  
+                    NemerleProjectFileConstants.ApplicationIcon
+            ];
+            
         internal GetValue[T](projectConfigs : IEnumerable.[ProjectConfig]) : T
         {
             def GetPerConfigValue()
@@ -95,15 +104,6 @@ namespace Nemerle.VisualStudio.Project
                 
             _project.SetIsDirty(true);
         }
-
-        static NonPerConfigProperties : array[string] = array
-            [ 
-                    ProjectFileConstants.AssemblyName,
-                    ProjectFileConstants.OutputType,  
-                    ProjectFileConstants.RootNamespace,
-                    NemerleProjectFileConstants.StartupObject,  
-                    NemerleProjectFileConstants.ApplicationIcon
-            ];
 
         _project : NemerleProjectNode; 
         _propertyName : string;

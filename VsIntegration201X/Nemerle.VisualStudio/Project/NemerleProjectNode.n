@@ -92,7 +92,7 @@ namespace Nemerle.VisualStudio.Project
             String.Equals(ext, NemerleConstants.FileExtension, StringComparison.OrdinalIgnoreCase);
         }
         
-        internal static GetOutputExtension(outputType : OutputType) : string 
+        internal static GetOutputExtension(outputType : NemerleOutputType) : string 
         {
             | Library => ".dll"
             | WinExe

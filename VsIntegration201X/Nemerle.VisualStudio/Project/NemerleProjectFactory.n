@@ -2,14 +2,17 @@
 using Nemerle.Collections;
 using Nemerle.Text;
 using Nemerle.Utility;
+using Nemerle.Extensions;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 
 using Microsoft.VisualStudioTools.Project;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.VSConstants;
 
 using IOleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 
@@ -40,9 +43,104 @@ namespace Nemerle.VisualStudio.Project
             throw NotImplementedException()
         }
         
-        public UpgradeProject_CheckOnly(projectFileName : string, pLogger : IVsUpgradeLogger, pUpgradeRequired : out int, pguidNewProjectFactory : out Guid, pUpgradeProjectCapabilityFlags : out uint) : int 
+        public UpgradeProject_CheckOnly(projectFileName : string, 
+                                        logger : IVsUpgradeLogger, 
+                                        upgradeRequired : out int, 
+                                        newProjectFactoryGuild : out Guid, 
+                                        upgradeProjectCapabilityFlags : out uint) : int 
         {
-            throw NotImplementedException()
+            upgradeRequired = 1;
+            upgradeProjectCapabilityFlags = (__VSPPROJECTUPGRADEVIAFACTORYFLAGS.PUVFF_BACKUPSUPPORTED | 
+                                             __VSPPROJECTUPGRADEVIAFACTORYFLAGS.PUVFF_COPYBACKUP) :> uint;
+            newProjectFactoryGuild = Guid.Empty;
+            
+            def ShouldUpdateNemerleProperty(nemerleProperty)
+            {
+                def nemerlePropertyValue = nemerleProperty.Value;
+                
+                if (string.IsNullOrEmpty(nemerlePropertyValue))
+                {
+                    true
+                }
+                else
+                {
+                    NemerleProjectDefaultData.
+                    OldNemerlePropertyValues.
+                    Contains(nemerlePropertyValue, StringComparer.InvariantCultureIgnoreCase)
+                }
+            }
+            
+            def ShouldUpdateNemerleVersion(projectData)
+            {
+                !NemerleProjectDefaultData.
+                ValidNemerleVersions.
+                Contains(projectData.NemerleVersion.Value, StringComparer.InvariantCultureIgnoreCase)
+            }
+            
+            def ShouldUpdateNemerleBinPathRootProperty(nemerleProperty)
+            {
+                def nemerlePropertyValue = nemerleProperty.Value;
+                
+                if (string.IsNullOrEmpty(nemerlePropertyValue))
+                {
+                    true
+                }
+                else
+                {
+                    nemerleProperty.Attribute("Condition") == null
+                }
+            }
+            
+            def ShouldUpdateTargetFrameworkVersion(projectData)
+            {
+                !NemerleProjectDefaultData.
+                ValidTargetFrameworkVersions.
+                Contains(projectData.TargetFrameworkVersion.Value);
+            }
+
+            def IsUpgradeRequired() : bool
+            {
+                return:
+                {
+                    def projectData = NemerleProjectUpgradeData(projectFileName);
+                    
+                    mutable toolsVersion;
+                    
+                    unless(Version.TryParse(projectData.ToolsVersion.Value, out toolsVersion))
+                        return(true);
+                   
+                    unless(toolsVersion.Major == 4 && toolsVersion.Minor == 0)
+                        return(true);
+                        
+                    when(ShouldUpdateNemerleProperty(projectData.NemerleProperty))
+                        return(true);
+                        
+                    when(ShouldUpdateNemerleVersion(projectData))
+                        return(true);
+
+                    when(ShouldUpdateNemerleBinPathRootProperty(projectData.NemerleBinPathRoot))
+                        return(true);
+
+                    when(ShouldUpdateTargetFrameworkVersion(projectData))
+                        return(true);
+                    
+                    false
+                }
+            }
+
+            try
+            {
+                upgradeRequired = if (IsUpgradeRequired()) 1 else 0;
+                S_OK
+            }
+            catch
+            {
+                | e => def message = $"Error while checking if a project needs to be upgraded: $(e.Message)";
+                       _ = logger.LogMessage(__VSUL_ERRORLEVEL.VSUL_ERROR :> uint, projectFileName, NemerleConstants.LanguageName, message);
+                       _ = MessageBox.Show(message, NemerleConstants.LanguageName);
+                       upgradeRequired = 0;
+                       E_FAIL
+            }
         }
         
         public UpgradeProject(sourceProjectFilePath : string, fUpgradeFlag : uint, bstrCopyLocation : string, upgradedFullyQualifiedFileName : out string, pLogger : IVsUpgradeLogger, pUpgradeRequired : out int, pguidNewProjectFactory : out Guid) : int

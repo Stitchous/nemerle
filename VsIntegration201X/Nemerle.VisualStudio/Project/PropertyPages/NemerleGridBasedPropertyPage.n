@@ -1,5 +1,6 @@
 ﻿using Nemerle;
 using Nemerle.Collections;
+using Nemerle.Extensions;
 using Nemerle.Text;
 using Nemerle.Utility;
 using Nemerle.WPF;
@@ -32,24 +33,26 @@ namespace Nemerle.VisualStudio.Project.PropertyPages
         def CreateGrid()
         {
             def propertyBrowser = (Project.Package :> NemerleProjectPackage).GetService.[IVSMDPropertyBrowser]();
-            def grid = propertyBrowser.CreatePropertyGrid();
-
-            def gridControl = Control.FromHandle(IntPtr(grid.Handle));
-            gridControl.Parent = panel;
-            gridControl.Size = Size(544, 294);
-            gridControl.Location = Point(3, 3);
-            gridControl.Visible = true;
-
+            def grid = propertyBrowser.CreatePropertyGrid() <- 
+                        { 
+                            GridSort = _PROPERTYGRIDSORT.PGSORT_CATEGORIZED | _PROPERTYGRIDSORT.PGSORT_ALPHABETICAL 
+                        };
             grid.SetOption(_PROPERTYGRIDOPTION.PGOPT_TOOLBAR, false);
-            grid.GridSort = _PROPERTYGRIDSORT.PGSORT_CATEGORIZED | _PROPERTYGRIDSORT.PGSORT_ALPHABETICAL;
-            
-            panel.SizeChanged += (_, _) => { gridControl.Width = panel.Width - 3 }
-            
             PropertyChanged += _ => 
                                {
                                    IsDirty = true;
                                    grid.Refresh();
                                }
+
+            def gridControl = Control.FromHandle(IntPtr(grid.Handle)) <- 
+                                { 
+                                    Parent = panel;
+                                    Size = Size(544, 294);
+                                    Location = Point(3, 3);
+                                    Visible = true
+                                };
+            
+            panel.SizeChanged += (_, _) => { gridControl.Width = panel.Width - 3 }
             
             grid
         }

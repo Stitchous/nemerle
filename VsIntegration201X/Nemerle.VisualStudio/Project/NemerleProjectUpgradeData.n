@@ -1,0 +1,76 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
+
+namespace Nemerle.VisualStudio.Project
+{
+    class NemerleProjectUpgradeData
+    {
+        private static Ns = XNamespace.Get("http://schemas.microsoft.com/developer/msbuild/2003");
+
+        public this(projectFilePath : string)
+        {
+            def doc = XDocument.Load(projectFilePath, 
+                                     LoadOptions.PreserveWhitespace | 
+                                     LoadOptions.SetBaseUri         | 
+                                     LoadOptions.SetLineInfo);
+            def project = doc.Root;
+
+            when (project?.Name.LocalName != "Project")
+                throw ApplicationException($"The '$projectFilePath' file is not in the correct format for a Nemerle project.");
+
+            match(project.Attribute(NemerleProjectFileConstants.ToolsVersion))
+            {
+                | null => ToolsVersion = XAttribute(NemerleProjectFileConstants.ToolsVersion, "0.0");
+                          project.Add(ToolsVersion);
+                | projectToolsVersion => ToolsVersion = projectToolsVersion;
+            }
+            
+            TargetFrameworkVersion = FindOrAddPropertyElement(project, "TargetFrameworkVersion");
+            NemerleBinPathRoot     = FindOrAddPropertyElement(project, "NemerleBinPathRoot");
+            NemerleVersion         = FindOrAddPropertyElement(project, "NemerleVersion");
+            NemerleProperty        = FindOrAddPropertyElement(project, "Nemerle");
+        }
+
+        public ToolsVersion           : XAttribute  { get; private set; }
+        public NemerleProperty        : XElement    { get; private set; }
+        public TargetFrameworkVersion : XElement    { get; private set; }
+        public NemerleVersion         : XElement    { get; private set; }
+        public NemerleBinPathRoot     : XElement    { get; private set; }
+
+        private static FindOrAddPropertyElement(project : XElement, propertyName : string) : XElement
+        {
+            def AddNewProperty() : XElement
+            {
+                match(project.Elements(Ns + "PropertyGroup").Where(g => !g.HasAttributes).NToList())
+                {
+                    | [] => throw ApplicationException($"Incorrect format of project file. The project must contains '$propertyName' property.")
+                    | propertyGroup :: _ => 
+                        {
+                            def newElem =  XElement(Ns + propertyName);
+                            if (propertyName == NemerleConstants.LanguageName)
+                                propertyGroup.Add(newElem);
+                            else
+                                propertyGroup.AddFirst(newElem);
+
+                            match(propertyGroup.FirstNode) 
+                            { 
+                                | XText as text => newElem.AddBeforeSelf(text.Value) 
+                                | _             => newElem.AddBeforeSelf("  " + Environment.NewLine)
+                            }
+                            
+                            newElem
+                        }
+                }
+            }
+
+            project.Descendants(Ns + propertyName).FirstOrDefault() ?? AddNewProperty()
+        }
+    }
+}

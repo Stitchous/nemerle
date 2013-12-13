@@ -27,7 +27,7 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;VS2010</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <StartProgram>C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\devenv.exe</StartProgram>
@@ -47,7 +47,7 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;VS2010</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <StartProgram>C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe</StartProgram>
@@ -61,12 +61,13 @@
     <DebugSymbols>false</DebugSymbols>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;VS2010</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
     <PlatformTarget>x86</PlatformTarget>
     <Platform>x86</Platform>
+    <RunDebugger>false</RunDebugger>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.Designer.Interfaces, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
@@ -122,6 +123,9 @@
     <Compile Include="Project\NemerleProjectConfig.n">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Project\NemerleProjectDefaultData.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Project\NemerleProjectFactory.n">
       <SubType>Code</SubType>
     </Compile>
@@ -137,7 +141,10 @@
     <Compile Include="Project\NemerleProjectProperty.n">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Project\OutputType.n">
+    <Compile Include="Project\NemerleProjectUpgradeData.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Project\NemerleOutputType.n">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Project\PropertyPages\NemerleBuildPropertyPage.n">
@@ -176,7 +183,6 @@
     <ProjectReference Include="..\Microsoft.VisualStudioTools.Project\Microsoft.VisualStudioTools.Project.csproj">
       <Name>Microsoft.VisualStudioTools.Project</Name>
       <Project>{542ff483-10bc-492b-a38d-94377ca69c49}</Project>
-      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

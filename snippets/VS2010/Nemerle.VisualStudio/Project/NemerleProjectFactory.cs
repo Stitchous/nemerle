@@ -58,7 +58,7 @@ namespace Nemerle.VisualStudio.Project
     #error You must define constant VS<VS Version> in the project file. E.g.: VS2010
 #endif
 
-            public const string NemerleVersion = "Net-" + ToolsVersion;
+            public const string NemerleVersion = "Net-" + FrameworkVersion40;
 
             public static readonly HashSet<string> ValidNemerleVersions = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
             {

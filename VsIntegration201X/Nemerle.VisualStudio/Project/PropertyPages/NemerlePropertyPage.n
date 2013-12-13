@@ -149,7 +149,7 @@ namespace Nemerle.VisualStudio.Project.PropertyPages
             
             def GetConfigs(nodeProperties)
             {
-                mutable provider;
+                mutable provider : IVsCfgProvider;
                 _ = ErrorHandler.ThrowOnFailure(nodeProperties.HierarchyNode.ProjectMgr.GetCfgProvider(out provider));
                 def expected = array(1);
                 _ = ErrorHandler.ThrowOnFailure(provider.GetCfgs(0, null, expected, null));

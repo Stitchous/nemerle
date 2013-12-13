@@ -1,0 +1,57 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+using Nemerle.Extensions;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Nemerle.VisualStudio.Project
+{
+    internal module NemerleProjectDefaultData
+    {
+        FrameworkVersion451 = "4.5.1";
+        FrameworkVersion45  = "4.5";
+        FrameworkVersion40  = "4.0";
+    
+        #if VS2013
+            TargetFrameworkVersion : string = "v" + FrameworkVersion451;
+        #elif VS2012
+            TargetFrameworkVersion : string = "v" + FrameworkVersion45;
+        #elif VS2010
+            TargetFrameworkVersion : string = "v" + FrameworkVersion40;
+        #else
+            #error You must define constant VS<VS Version> in the project file. E.g.: VS2010
+        #endif
+    
+        ToolsVersion = "4.0";
+    
+        NemerleVersion : string = "Net-" + FrameworkVersion40;
+
+        NemerleProperty    = @"$(NemerleBinPathRoot)\$(NemerleVersion)";
+        NemerleBinPathRoot = @"$(ProgramFiles)\Nemerle";
+    
+        internal OldNemerlePropertyValues = array[ @"$(ProgramFiles)\Nemerle", 
+                                                   @"$(ProgramFiles)\Nemerle\Net-3.5", 
+                                                   @"$(ProgramFiles)\Nemerle\Net-4.0" ];
+                                               
+        internal ValidNemerleVersions : IList.[string] = List() <- ["Net-" + FrameworkVersion40];
+                                               
+        internal ValidTargetFrameworkVersions : IList.[string] = List() <- 
+        [
+            #if VS2010 || VS2012 || VS2013
+                "v" + FrameworkVersion40,
+            #endif
+        
+            #if VS2012 || VS2013
+                "v" + FrameworkVersion45,
+            #endif
+        
+            #if VS2013
+                "v" + FrameworkVersion451,
+            #endif
+        ];
+    }
+}

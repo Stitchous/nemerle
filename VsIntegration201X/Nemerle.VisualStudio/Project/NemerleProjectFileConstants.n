@@ -19,5 +19,7 @@ namespace Nemerle.VisualStudio.Project
 	  internal OutputPath        = "OutputPath";
 	  internal RunDebugger       = "RunDebugger";
       internal DocumentationFile = "DocumentationFile";
+      
+      internal ToolsVersion      = "ToolsVersion";
   }
 }
