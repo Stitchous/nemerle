@@ -10,7 +10,6 @@ using Microsoft.VisualStudioTools.Project;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.OLE.Interop;
 
-using Nemerle.VisualStudio.LanguageService;
 using Nemerle.VisualStudio.Project;
 using Nemerle.VisualStudio.Project.PropertyPages;
 using Nemerle.VisualStudio.Navigation;

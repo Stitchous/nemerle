@@ -1,0 +1,25 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Linq;
+
+using Microsoft.VisualStudio.Utilities;
+
+namespace Nemerle.VisualStudio
+{
+  ///<remarks>
+  /// see "File types and extensions in Visual Studio 2012.docx"
+  ///</remarks>
+  module NemerleContent
+  {
+      [Export]
+      [Name(NemerleConstants.LanguageName)]
+      [BaseDefinition("code")]
+      internal ContentTypeDefinition : ContentTypeDefinition;
+  }
+}

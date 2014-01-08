@@ -5,6 +5,7 @@ using Nemerle.Utility;
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 
 using Microsoft.VisualStudio.Shell;
@@ -15,15 +16,23 @@ using Microsoft.VisualStudioTools;
 using Microsoft.VisualStudioTools.Navigation;
 
 using Nemerle.VisualStudio.Navigation;
+using Nemerle.VisualStudio.Project;
 
 namespace Nemerle.VisualStudio
 {
   [PackageRegistration(UseManagedResourcesOnly = true)]
   [ProvideAutoLoad(UIContextGuids.SolutionExists)]
+  [ProvideLanguageService(typeof(NemerleLanguageInfo), NemerleConstants.LanguageName, 106, RequestStockColors = true, ShowSmartIndent = true, ShowCompletion = true, DefaultToInsertSpaces = true, HideAdvancedMembersByDefault = true, EnableAdvancedMembersOption = true, ShowDropDownOptions = true)]
+  [ProvideLanguageExtension(typeof(NemerleLanguageInfo), NemerleConstants.FileExtension)]
   public class NemerleToolsPackage : CommonPackage, IVsComponentSelectorProvider
   {
-    public this()
+    protected override Initialize() : void 
     {
+        base.Initialize();
+
+       // register our language service so that we can support features like the navigation bar
+       def langService = NemerleLanguageInfo(this);
+       (this : IServiceContainer).AddService(langService.GetType(), langService, promote = true);
     }
     
     internal override CreateLibraryManager(package : CommonPackage) : LibraryManager
@@ -38,8 +47,7 @@ namespace Nemerle.VisualStudio
     
     public override IsRecognizedFile(filename : string) : bool
     {
-        _ = filename;
-        true
+        NemerleProjectNode.IsNemerleFile(filename)
     }
     
     public GetComponentSelectorPage(rguidPage : ref System.Guid, ppage : array[VSPROPSHEETPAGE]) : int

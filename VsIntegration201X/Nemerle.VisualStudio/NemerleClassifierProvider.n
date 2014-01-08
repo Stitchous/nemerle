@@ -1,0 +1,28 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.ComponentModel.Composition;
+using System.Collections.Generic;
+using System.Linq;
+
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
+
+namespace Nemerle.VisualStudio
+{
+  [Export(typeof(IClassifierProvider))]
+  [ContentType(NemerleConstants.LanguageName)]
+  internal class NemerleClassifierProvider : IClassifierProvider
+  {
+    public GetClassifier(textBuffer : ITextBuffer) : IClassifier
+    {
+        _ = textBuffer;
+        throw System.NotImplementedException()
+    }
+    
+  }
+}

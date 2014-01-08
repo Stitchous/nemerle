@@ -1,0 +1,44 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Microsoft.VisualStudio.TextManager.Interop;
+using Microsoft.VisualStudio.VSConstants;
+
+namespace Nemerle.VisualStudio.Navigation
+{
+  [Record]
+  internal class NemerleLanguageInfo : IVsLanguageInfo
+  {
+    public GetCodeWindowManager(pCodeWin : IVsCodeWindow, ppCodeWinMgr : out IVsCodeWindowManager) : int
+    {
+        ppCodeWinMgr = null;
+        E_NOTIMPL
+    }
+    
+    public GetColorizer(_pBuffer : IVsTextLines, ppColorizer : out IVsColorizer) : int
+    {
+        ppColorizer = null;
+        E_NOTIMPL
+    }
+    
+    public GetFileExtensions(pbstrExtensions : out string) : int
+    {
+        pbstrExtensions = NemerleConstants.FileExtension;
+        S_OK
+    }
+    
+    public GetLanguageName(bstrName : out string) : int
+    {
+        bstrName = NemerleConstants.LanguageName;
+        S_OK
+    }
+   
+    private _serviceProvider : IServiceProvider;
+  }
+}

@@ -6,6 +6,11 @@ Project("{EDCC3B85-0BAD-11DB-BC1A-00112FDE8B61}") = "Nemerle.VisualStudio", "Nem
 EndProject
 Project("{EDCC3B85-0BAD-11DB-BC1A-00112FDE8B61}") = "Nemerle.WPF-VS_2012", "..\snippets\Nemerle.WPF\Nemerle.WPF\Nemerle.WPF-VS_2012.nproj", "{1F6CA7DA-F1EF-4B4E-80E2-272C41761B3F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{B56F6A01-F00D-45CE-8E89-8C0548401C9E}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\File types and extensions in Visual Studio 2012.docx = Docs\File types and extensions in Visual Studio 2012.docx
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
