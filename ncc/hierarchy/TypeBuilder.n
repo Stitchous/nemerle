@@ -1245,11 +1245,6 @@ public partial class TypeBuilder : TypeInfo
 
           this.t_implements = itfs.NToList();
 
-          //foreach (itf in this.t_implements)
-          //  itfs.tycon.GetDirectSuperTypes();
-
-          //_directImplementedInterfaces = itfs.ToList();
-
         | _ => this.parent_type = null
       }
 
@@ -1421,6 +1416,9 @@ public partial class TypeBuilder : TypeInfo
     _superTypeInfosLookup[this]                   = [GetMemType()];
     _superTypes                                   = _superTypes.Reverse();
     _superTypesCalculated                         = true;
+    when (t_implements is _ :: _ :: _) // has more then 1 elems
+      t_implements = NormalizeSupertypes(t_implements);
+
 
     // we should do the additional accessibility checks, which could have
     // been loosened during bind_types, when supertypes were null
